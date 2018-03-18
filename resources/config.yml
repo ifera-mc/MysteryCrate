@@ -1,0 +1,33 @@
+#  ___  ___          _                  _____           _
+#  |  \/  |         | |                /  __ \         | |
+#  | .  . |_   _ ___| |_ ___ _ __ _   _| /  \/_ __ __ _| |_ ___
+#  | |\/| | | | / __| __/ _ \ '__| | | | |   | '__/ _` | __/ _ \
+#  | |  | | |_| \__ \ ||  __/ |  | |_| | \__/\ | | (_| | ||  __/
+#  \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
+#           __/ |                  __/ |
+#          |___/                  |___/  By JackMD for PMMP
+
+# use § for color
+
+# Enter what you want the name of the crate to be.
+crateName: §aMystery §6Box
+
+# Enter the name which would hover above the chest.
+crateHover: §l§c§k|||§r §l§aMystery §6Box §c§k|||§r
+
+# Enter the name of the Key.
+keyName: Mystery§bCrate
+
+# The the description for the Key.
+descOne: Use this key at /warp crates.
+descTwo: Get a chance to win OP stuff!
+
+# Enter the name of the FOLDER of the world in which crate is located.
+# Example if your world name is spawn but folder name is spw then enter spw in crateWorld
+crateWorld: world
+
+# Enter the co-ordinates X, Y and Z of the chest/crate.
+# Use /xyz in-game and tap the block with the axe to get its co-ordinates.
+X: 221
+"Y": 67
+Z: 277

@@ -1,0 +1,20 @@
+name: MysteryCrate
+main: JackMD\MysteryCrate\Main
+api: [3.0.0-ALPHA11]
+version: 1.0.0
+authors: [JackMD]
+load: POSTWORLD
+description: This plugins adds MysteryCrates with op items.
+website: https://tinyurl.com/jackMD-yt
+
+permissions:
+  mysterycrate:
+   default: op
+   description: "Root permission"
+   childern:
+    mysterycrate.command.key:
+     default: op
+     description: "Allows use of /key command"
+    mysterycrate.command.xyz:
+     default: op
+     descrption: "Allows use of /xyz command"
