@@ -5,7 +5,7 @@ version: 1.0.0
 authors: [JackMD]
 load: POSTWORLD
 description: This plugins adds MysteryCrates with op items.
-website: https://tinyurl.com/jackMD-yt
+website: https://github.com/JackMD/MysteryCrate
 
 permissions:
   mysterycrate:
