@@ -1,11 +1,11 @@
 # MysteryCrate
 ### A MysteryCrate plugin for PocketMine-MP // McPe 1.2
-#### Features
+### Features
  - This plugin adds custom **crates** to your server.
  - Crates can be opened with a custom **key**.
  - It automatically spawns a custom **floating text** above the crate.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
-##### How to setup?
+### How to setup?
  - This plugin depends on [VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments) for adding enchants on the items. **Remember this plugin won't load without it.** So make sure to have it.
  - Next drop the `.phar` into your `plugins` folder.
  - Next navigate to the `config.yml` file and mention the `XYZ` coordinates of the chest.
