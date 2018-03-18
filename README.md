@@ -1,4 +1,5 @@
 # MysteryCrate
+[![Poggit-Ci](https://poggit.pmmp.io/ci.shield/JackMD/MysteryCrate/MysteryCrate)](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate)
 ### A MysteryCrate plugin for PocketMine-MP // McPe 1.2
 ### Features
  - This plugin adds custom **crates** to your server.
