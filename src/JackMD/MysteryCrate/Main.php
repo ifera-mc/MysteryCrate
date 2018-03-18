@@ -73,6 +73,9 @@ class Main extends PluginBase implements Listener
     public function onEnable()
     {
         $this->getServer()->getPluginManager()->registerEvents(($this), $this);
+        if(!is_dir($this->getDataFolder())){
+            mkdir($this->getDataFolder());
+        }
 
         if ($this->getServer()->getPluginManager()->getPlugin("VanillaEnchantments")) {
 
