@@ -7,7 +7,7 @@
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
  - This plugin depends on [VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments) for adding enchants on the items. **Remember this plugin won't load without it.** So make sure to have it.
- - Next drop the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate/Dev:2) into your `plugins` folder.
+ - Next drop the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) into your `plugins` folder.
  - Next navigate to the `config.yml` file and mention the `XYZ` coordinates of the chest.
  - For this purpose use `/xyz` command in-game and then tap the chest to get its coordinates.
  - Now mention the **exact** `folder name` of the`world` where the crate is located in `crateWorld`.
