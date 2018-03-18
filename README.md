@@ -14,8 +14,7 @@
  - Reload the server and you are good to go.
  - To get the crate key use `/key [player] [amount]` in-game and then tap the crate with it.
 ### Info
-  - I will be releasing this plugin the day I get to 60 subscribers on my [YT](https://www.youtube.com/watch?v=JPkGL9R9prY&app=desktop) channel.
+  - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://www.youtube.com/watch?v=JPkGL9R9prY&app=desktop) channel.
   - Support is appreciated.
-  - Make sure to subscribe to be updated for when i release more stuff.
 ### Video
 [![YouTube](https://img.youtube.com/vi/JPkGL9R9prY/0.jpg)](https://m.youtube.com/watch?v=JPkGL9R9prY)
