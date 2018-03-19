@@ -112,8 +112,6 @@ class UpdaterEvent extends PluginTask
                     $this->setItem(11, 0, 0);
                     $this->setItem(12, 0, 0);
 
-                    $this->setItem(13, $this->ids[(int)rand(0, 18)], 1);
-
                     $this->setItem(14, 0, 0);
                     $this->setItem(15, 0, 1);
                     $this->setItem(16, 0, 1);
