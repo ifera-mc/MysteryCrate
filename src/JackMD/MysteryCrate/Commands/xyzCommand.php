@@ -48,7 +48,7 @@ class xyzCommand extends PluginCommand
         parent::__construct($name, $plugin);
         $this->setDescription("Get XYZ coordinates of a block!");
         $this->setUsage("/xyz");
-        $this->setPermission("mysterycrate.command.xyz");
+        $this->setPermission("mc.command.xyz");
         $this->name = $name;
         $this->plugin = $plugin;
     }
@@ -67,14 +67,22 @@ class xyzCommand extends PluginCommand
         $key->setCustomName(TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator" . TextFormat::RESET);
         $key->setLore(['Tap the block whose', 'location you want to find',]);
 
-        if ($plugin instanceof Main) {
-            if (!isset($args[0])) {
-                if ($sender instanceof Player) {
-                    $sender->getInventory()->addItem($key);
-                    $sender->sendMessage(TextFormat::GREEN . "You have recieved " . TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator." . TextFormat::RESET);
-                    $sender->sendMessage(TextFormat::LIGHT_PURPLE . "Tap a block with it to find its coordinates.");
+        if($sender instanceof Player) {
+            if ($sender->isOp() || $sender->hasPermission("mc.command.key")) {
+                if ($plugin instanceof Main) {
+                    if (!isset($args[0])) {
+                        $sender->getInventory()->addItem($key);
+                        $sender->sendMessage(TextFormat::GREEN . "You have recieved " . TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator." . TextFormat::RESET);
+                        $sender->sendMessage(TextFormat::LIGHT_PURPLE . "Tap a block with it to find its coordinates.");
+
+                    }
                 }
+
+            } else {
+                $sender->sendMessage(TextFormat::RED . "You don't have permission to use this command.");
             }
+        }else{
+            $sender->sendMessage(TextFormat::RED . "Use this command in-game");
         }
         return true;
     }

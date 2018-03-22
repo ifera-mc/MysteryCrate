@@ -16,23 +16,30 @@ namespace JackMD\MysteryCrate;
 
 use JackMD\MysteryCrate\Commands\KeyCommand;
 use JackMD\MysteryCrate\Commands\xyzCommand;
+use JackMD\MysteryCrate\Particles\CloudRain;
+use JackMD\MysteryCrate\Particles\ParticleTask;
 use pocketmine\block\Block;
 use pocketmine\event\entity\EntityLevelChangeEvent;
+use pocketmine\event\inventory\InventoryCloseEvent;
+use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\inventory\ChestInventory;
+use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\level\particle\FloatingTextParticle;
+use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\tile\Chest;
 use pocketmine\utils\TextFormat;
 
-//use JackMD\MysteryCrate\Task\ParticleTask;//TODO add particles around the chest
+//If using PhpStorm don't remove this or particles will not spawn.
 
 /**
  * Class Main
@@ -43,8 +50,16 @@ class Main extends PluginBase implements Listener
 
     private static $instance;
 
+    public $notInUse = true;
+
     public $item;
+
+    /** @var UpdaterEvent */
     public $task;
+
+    /** @var ParticleTask */
+    public $particle;
+
     public $crateName;
     public $crateHover;
     public $keyName;
@@ -54,7 +69,8 @@ class Main extends PluginBase implements Listener
     public $X;
     public $Y;
     public $Z;
-    public $particle;
+
+    public $textParticle;
     private $cX;
     private $cY;
     private $cZ;
@@ -73,7 +89,7 @@ class Main extends PluginBase implements Listener
     public function onEnable()
     {
         $this->getServer()->getPluginManager()->registerEvents(($this), $this);
-        if(!is_dir($this->getDataFolder())){
+        if (!is_dir($this->getDataFolder())) {
             mkdir($this->getDataFolder());
         }
 
@@ -95,11 +111,16 @@ class Main extends PluginBase implements Listener
 
             $this->task = new UpdaterEvent($this);
 
-            $this->initParticle();
+            $this->initTextParticle();
 
-            //TODO add particles around the chest
-            //$task = new ParticleTask($this);
-            //$this->getServer()->getScheduler()->scheduleRepeatingTask($task, 1);
+            $radius = 3;
+            if ($radius > 0) {
+                $v3 = new Vector3($this->X + 0.5, $this->Y + 2, $this->Z + 0.5);
+                $this->getServer()->getScheduler()->scheduleRepeatingTask(new ParticleTask($this, $this->particle, $this->crateWorld, $radius, $v3), 5)->getTaskId();
+            }
+
+            $taskCloud = new CloudRain($this);
+            $this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
 
             $this->getLogger()->info(TextFormat::GREEN . "
 ___  ___          _                  _____           _       
@@ -121,9 +142,9 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         }
     }
 
-    private function initParticle()
+    private function initTextParticle()
     {
-        if (!$this->particle instanceof FloatingTextParticle) {
+        if (!$this->textParticle instanceof FloatingTextParticle) {
 
             $x = $this->X + 0.5;
             $y = $this->Y + 1;
@@ -131,7 +152,7 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
 
             $pos = new Vector3($x, $y, $z);
 
-            $this->particle = new FloatingTextParticle($pos, '', $this->crateHover . TextFormat::RESET);
+            $this->textParticle = new FloatingTextParticle($pos, '', $this->crateHover . TextFormat::RESET);
         }
     }
 
@@ -148,6 +169,8 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         $amount = 1;
         return $amount;
     }
+
+    public function getCrate(){}
 
     /**
      * @param Player $player
@@ -186,7 +209,7 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         $player = $event->getPlayer();
         $heldItem = $player->getInventory()->getItemInHand();
         $block = $event->getBlock();
-        $level = $block->getLevel()->getName();
+        $level = $block->getLevel()->getFolderName();
         $item = $event->getItem();
         $isKey = $this->isCrateKey($item);
 
@@ -204,19 +227,39 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
                         $chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));
                         if ($chest instanceof Chest) {
 
-                            $this->task->chest = $chest;
-                            $chest->setName(TextFormat::LIGHT_PURPLE . TextFormat::BOLD . $this->crateName);
-                            $this->task->player = $event->getPlayer();
-                            $this->task->t_delay = 3 * 20;
-                            $this->task->canTakeItem = false;
-                            $item = $player->getInventory()->getItemInHand();
-                            $item->setCount($item->getCount() - 1);
-                            $item->setDamage($item->getDamage());
-                            $event->getPlayer()->getInventory()->setItemInHand($item);
-                            $this->task->scheduler = $this->getServer()->getScheduler();
-                            $this->getServer()->getScheduler()->scheduleRepeatingTask($this->task, 3);
+                            if ($this->isNotInUse()) {
+                                $this->setNotInUse(false);
+                                $this->task->chest = $chest;
+                                $chest->setName(TextFormat::LIGHT_PURPLE . TextFormat::BOLD . $this->crateName);
+                                $this->task->player = $event->getPlayer();
+                                $this->task->t_delay = 3 * 20;
 
-                            $player->sendMessage(TextFormat::GREEN . "You opened the " . $this->crateName . TextFormat::GREEN . " and got rewards!");
+                                $this->task->setCanTakeItem(false);
+
+                                $item = $player->getInventory()->getItemInHand();
+                                $item->setCount($item->getCount() - 1);
+                                $item->setDamage($item->getDamage());
+                                $event->getPlayer()->getInventory()->setItemInHand($item);
+                                $this->task->scheduler = $this->getServer()->getScheduler();
+                                $this->getServer()->getScheduler()->scheduleRepeatingTask($this->task, 3);
+
+                                $v3 = $cpos;
+                                $v3->x += 0.5;
+                                $v3->y += 1.2;
+                                $v3->z += 0.5;
+                                for ($i = 0; $i <= 15; $i++) {
+                                    $scatter = 0.15;
+                                    $vector3 = $v3;
+                                    $vector3->x += $this->randomFloat(-$scatter, $scatter);
+                                    $vector3->y += $this->randomFloat(-0.1, 0.1);
+                                    $vector3->z += $this->randomFloat(-$scatter, $scatter);
+                                    $block->level->addParticle(new LavaParticle($vector3));
+                                }
+
+                            } else {
+                                $event->setCancelled();
+                                $player->sendMessage(TextFormat::RED . "Crate is in use..");
+                            }
                         }
                     } else {
                         $event->setCancelled();
@@ -238,14 +281,97 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     }
 
     /**
-     * @param InventoryTransactionEvent $ev
+     * @return bool
      */
-    public function onInventoryTransactionEvent(InventoryTransactionEvent $ev)
+    public function isNotInUse(): bool
     {
-        if ($this->task !== NULL && $this->task->canTakeItem) {
-            $ev->setCancelled(false);
-        } else {
-            $ev->setCancelled(true);
+        return $this->notInUse;
+    }
+
+    public function getNotInUse(bool $val)
+    {
+        if ($this->isNotInUse() !== $val) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param bool $notInUse
+     */
+    public function setNotInUse(bool $notInUse)
+    {
+        $this->notInUse = $notInUse;
+    }
+
+    private function randomFloat($min = -1.2, $max = 1.2)
+    {
+        return $min + mt_rand() / mt_getrandmax() * ($max - $min);
+    }
+
+    /**
+     * @param InventoryOpenEvent $event
+     */
+    public function onInventoryOpen(InventoryOpenEvent $event)
+    {
+
+        $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
+        $chest = $event->getPlayer()->getLevel()->getBlock($cpos);
+        $chestTile = $event->getPlayer()->getLevel()->getTile(new Vector3($chest->getX(), $chest->getY(), $chest->getZ()));
+
+        if ($chestTile instanceof Chest) {
+            $chestInv = $event->getInventory()->getViewers();
+            if ($chestInv !== []) {
+                $event->setCancelled();
+            }
+            if ($this->task !== [] && $chestInv !== []) {
+                $event->getInventory()->close($event->getPlayer());
+            }
+        }
+
+    }
+
+    /**
+     * @param InventoryCloseEvent $event
+     */
+    public function onInventoryClose(InventoryCloseEvent $event)
+    {
+
+        $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
+        $chest = $event->getPlayer()->getLevel()->getBlock($cpos);
+        $chestTile = $event->getPlayer()->getLevel()->getTile(new Vector3($chest->getX(), $chest->getY(), $chest->getZ()));
+
+        if ($chestTile instanceof Chest) {
+            $chestInv = $event->getInventory()->getViewers();
+            if ($chestInv == []) {
+                $event->setCancelled();
+            }
+            $this->setNotInUse(true);
+            $this->getServer()->getScheduler()->cancelTask($this->task->getTaskId());
+        }
+    }
+
+    /**
+     * @param InventoryTransactionEvent $event
+     */
+    public function onInventoryTransaction(InventoryTransactionEvent $event)
+    {
+        $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
+        $chest = $event->getTransaction()->getSource()->getPlayer()->getLevel()->getBlock($cpos);
+        $chestTile = $event->getTransaction()->getSource()->getLevel()->getTile(new Vector3($chest->getX(), $chest->getY(), $chest->getZ()));
+        if ($chestTile instanceof Chest) {
+            foreach ($event->getTransaction()->getActions() as $action) {
+                if ($action instanceof SlotChangeAction) {
+                    $inventory = $action->getInventory();
+                    if ($inventory instanceof ChestInventory) {
+                        if ($this->task !== NULL && $this->task->isCanTakeItem()) {
+                            $event->setCancelled(true);
+                        } else {
+                            $event->setCancelled(true);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -280,33 +406,30 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
 
     public function PlayerJoinEvent(PlayerJoinEvent $ev)
     {
-        $players = $this->getServer()->getOnlinePlayers();
         $lev = $ev->getPlayer()->getLevel();
-        foreach ($players as $player) {
-            $lev->addParticle($this->particle, [$player]);
+        $crateLevel = $this->crateWorld;
+        if ($lev->getFolderName() == $crateLevel) {
+            $lev->addParticle($this->textParticle, [$ev->getPlayer()]);
         }
+
     }
 
     public function onLevelChange(EntityLevelChangeEvent $event)
     {
 
-        $targetLevel = $event->getTarget()->getFolderName();
+        $targetLevel = $event->getTarget();
         $crateLevel = $this->crateWorld;
 
         if ($event->getEntity() instanceof Player) {
-            if ($crateLevel == $targetLevel) {
-                $this->particle->setInvisible(false);//If you are using PhpStorm then ignore this highlight.
-                $players = $this->getServer()->getOnlinePlayers();
-                $lev = $event->getTarget();
-                foreach ($players as $player) {
-                    $lev->addParticle($this->particle, [$player]);
-                }
-            } else {
-                $this->particle->setInvisible(true);//If you are using PhpStorm then ignore this highlight.
-                $players = $this->getServer()->getOnlinePlayers();
-                $lev = $event->getOrigin();
-                foreach ($players as $player) {
-                    $lev->addParticle($this->particle, [$player]);
+            if ($this->textParticle instanceof FloatingTextParticle) {
+                if ($targetLevel->getFolderName() == $crateLevel) {
+                    $this->textParticle->setInvisible(false);
+                    $lev = $event->getTarget();
+                    $lev->addParticle($this->textParticle, [$event->getEntity()]);
+                } else {
+                    $this->textParticle->setInvisible(true);
+                    $lev = $event->getOrigin();
+                    $lev->addParticle($this->textParticle, [$event->getEntity()]);
                 }
             }
         }

@@ -45,7 +45,7 @@ class KeyCommand extends PluginCommand
         parent::__construct($name, $plugin);
         $this->setDescription("Give a crate key");
         $this->setUsage("/key [player] [amount]");
-        $this->setPermission("mysterycrate.command.key");
+        $this->setPermission("mc.command.key");
         $this->name = $name;
         $this->plugin = $plugin;
     }
@@ -58,38 +58,42 @@ class KeyCommand extends PluginCommand
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
-        $plugin = $this->getPlugin();
-        if ($plugin instanceof Main) {
-            if (!isset($args[0])) {
-                $sender->sendMessage(TextFormat::GREEN."Usage: /key [player] [amount]");
-                return false;
-            }
-            $target = $sender;
-            if (isset($args[0])) {
-                $target = $plugin->getServer()->getPlayer($args[0]);
-                if (!$target instanceof Player) {
-                    $sender->sendMessage(TextFormat::RED . "Invalid player. Try again.");
+        if ($sender->isOp() || $sender->hasPermission("mc.command.key")) {
+            $plugin = $this->getPlugin();
+            if ($plugin instanceof Main) {
+                if (!isset($args[0])) {
+                    $sender->sendMessage(TextFormat::RED . "Usage: /key [player] [amount]");
                     return false;
                 }
-            } else {
-                if (!$target instanceof Player) {
-                    $sender->sendMessage(TextFormat::RED . "Please specify a player.");
-                    return false;
+                $target = $sender;
+                if (isset($args[0])) {
+                    $target = $plugin->getServer()->getPlayer($args[0]);
+                    if (!$target instanceof Player) {
+                        $sender->sendMessage(TextFormat::RED . "Invalid player. Try again.");
+                        return false;
+                    }
+                } else {
+                    if (!$target instanceof Player) {
+                        $sender->sendMessage(TextFormat::RED . "Please specify a player.");
+                        return false;
+                    }
                 }
+                if (isset($args[1]) and is_numeric($args[1])) {
+                    $amount = (int)$args[1];
+                } else {
+                    $amount = $plugin->getAmount();
+                }
+                $plugin->giveKey($target, $amount);
+
+                $keyName = $plugin->getConfig()->getNested("keyName");
+
+                $sender->sendMessage(TextFormat::GOLD . $keyName . TextFormat::GREEN . " key has been given.");
+
+                return true;
             }
-            if(isset($args[1]) and is_numeric($args[1])) {
-                $amount = (int) $args[1];
-            } else {
-                $amount =  $plugin->getAmount();
-            }
-            $plugin->giveKey($target, $amount);
-
-            $keyName = $plugin->getConfig()->getNested("keyName");
-
-            $sender->sendMessage(TextFormat::GOLD  . $keyName . TextFormat::GREEN .  " key has been given.");
-
-            return true;
+        }else{
+            $sender->sendMessage(TextFormat::RED . "You don't have permission to use this command.");
         }
-        return false;
+        return true;
     }
 }
