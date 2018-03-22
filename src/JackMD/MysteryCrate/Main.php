@@ -324,9 +324,6 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
             if ($chestInv !== []) {
                 $event->setCancelled();
             }
-            if ($this->task !== [] && $chestInv !== []) {
-                $event->getInventory()->close($event->getPlayer());
-            }
         }
 
     }
