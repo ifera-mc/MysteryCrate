@@ -39,8 +39,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\tile\Chest;
 use pocketmine\utils\TextFormat;
 
-//If using PhpStorm don't remove this or particles will not spawn.
-
 /**
  * Class Main
  * @package MysteryCrate
@@ -119,8 +117,14 @@ class Main extends PluginBase implements Listener
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new ParticleTask($this, $this->particle, $this->crateWorld, $radius, $v3), 5)->getTaskId();
             }
 
+            if($this->getServer()->getLevelByName($this->crateWorld) !== NULL) {
+
             $taskCloud = new CloudRain($this);
             $this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
+            
+            }else{
+                $this->getServer()->getLogger()->critical("Please set the crateWorld and X, Y, Z coordinates in the config.yml");
+            }
 
             $this->getLogger()->info(TextFormat::GREEN . "
 ___  ___          _                  _____           _       
