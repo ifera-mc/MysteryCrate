@@ -12,17 +12,33 @@
  - This plugin adds custom **crates** to your server.
  - Crates can be opened with a custom **key**.
  - It automatically spawns a custom **floating text** above the crate.
+ - Along with FloatingText a constant show of **Particles** is performed above the crate.
+ - Upon **opening** the crate **another** set of **Particles** is generated telling player someone opened the crate.
+ - Crate name can be set directly through `config.yml`.
+ - Fool proof. Players cannot grief it.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
  - This plugin depends on [VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments) for adding enchants on the items. **Remember this plugin won't load without it.** So make sure to have it.
- - Next drop the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) into your `plugins` folder.
+ - Get the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) and drop the into your `plugins` folder.
  - Next navigate to the `config.yml` file and mention the `XYZ` coordinates of the chest.
- - For this purpose use `/xyz` command in-game and then tap the chest to get its coordinates.
- - Now mention the **exact** `folder name` of the`world` where the crate is located in `crateWorld`.
+ - For this purpose use `/xyz` command in-game and then tap the chest you want to set as a crate to get its coordinates.
+ - Enter those X, Y and Z coordinates in `config.yml` under `X`, `Y` and `Z` headings.
+ - **Make sure that name of the world where crate is located is same as the world folder name.**
+ - Now mention the `name` of the`world` where the crate is located in `crateWorld`.
  - Reload the server and you are good to go.
  - To get the crate key use `/key [player] [amount]` in-game and then tap the crate with it.
+ - To access the `xyz` locator do `/xyz` in-game.
+### TODO's
+ - [x] Add basic particles.
+ - [x] Finish working on commands.
+ - [ ] Add options for more particles.
+ - [ ] Add custom `items.yml`to declare custom items to be given to players.
+ - [ ] Make setup a bit easier by making the plugin get coordinates itself.
+ - [ ] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
+ - [ ] **(*Low Priority*)** Add support for making more than one crate.
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://www.youtube.com/watch?v=JPkGL9R9prY&app=desktop) channel.
   - Support is appreciated.
+  - Please don't hesitate to ask questions or report bug report in issues section.
 ### Video
 [![YouTube](https://img.youtube.com/vi/JPkGL9R9prY/0.jpg)](https://m.youtube.com/watch?v=JPkGL9R9prY)
