@@ -14,19 +14,24 @@
 
 namespace JackMD\MysteryCrate;
 
+use JackMD\MysteryCrate\Task\PutChest;
+use JackMD\MysteryCrate\Task\RemoveChest;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\level\sound\ClickSound;
+use pocketmine\math\Vector3;
+use pocketmine\Player;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\tile\Chest;
+use pocketmine\utils\TextFormat;
 
 /**
  * @property  main
  */
 class UpdaterEvent extends PluginTask
 {
-    public $canTakeItem = true;
+    public $canTakeItem = false;
     public $t_delay = 3 * 20;
     public $ids = array(7, 49, 466, 260, 322, 352, 364, 264, 310, 311, 312, 313, 266, 265, 264, 388, 57, 41, 276, 278);
     public $scheduler;
@@ -84,7 +89,7 @@ class UpdaterEvent extends PluginTask
 
                     $block = $this->chest;
 
-                    $block->getLevel()->addSound(new ClickSound($block));
+                    $block->getLevel()->addSound(new ClickSound($block), [$this->player]);
 
                     $this->setItem(10, $this->ids[(int)rand(0, 18)], 1);
                     $this->setItem(11, $this->ids[(int)rand(0, 18)], 1);
@@ -98,36 +103,29 @@ class UpdaterEvent extends PluginTask
             if ($this->t_delay == -1) {
                 if ($this->chest instanceof Chest) {
 
-                    $this->setItem(0, 0, 1);
-                    $this->setItem(1, 0, 1);
-                    $this->setItem(2, 0, 1);
-                    $this->setItem(3, 0, 1);
-                    $this->setItem(4, 0, 1);
-                    $this->setItem(5, 0, 1);
-                    $this->setItem(6, 0, 1);
-                    $this->setItem(7, 0, 1);
-                    $this->setItem(8, 0, 1);
-                    $this->setItem(9, 0, 0);
                     $this->setItem(10, 0, 0);
                     $this->setItem(11, 0, 0);
                     $this->setItem(12, 0, 0);
 
                     $this->setItem(14, 0, 0);
-                    $this->setItem(15, 0, 1);
-                    $this->setItem(16, 0, 1);
-                    $this->setItem(17, 0, 1);
-                    $this->setItem(18, 0, 1);
-                    $this->setItem(19, 0, 1);
-                    $this->setItem(20, 0, 1);
-                    $this->setItem(21, 0, 1);
-                    $this->setItem(22, 0, 1);
-                    $this->setItem(23, 0, 1);
-                    $this->setItem(24, 0, 1);
-                    $this->setItem(25, 0, 1);
-                    $this->setItem(26, 0, 1);
-                    $this->canTakeItem = true;
+                    $this->setItem(15, 0, 0);
+                    $this->setItem(16, 0, 0);
+
+                    $this->setCanTakeItem(true);
 
                     $this->plugin->getServer()->getScheduler()->cancelTask($this->getTaskId());
+                    $cpos = new Vector3((int)$this->plugin->X, (int)$this->plugin->Y, (int)$this->plugin->Z);
+
+                    $slot13 = $this->chest->getInventory()->getItem(13);
+
+                    if($this->player instanceof Player){
+                        $this->player->getInventory()->addItem($slot13);
+                        $this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() .  TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount(). ")" . TextFormat::GREEN . " from " . $this->plugin->crateName);
+                    }
+
+                    $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin, $cpos), 20);
+
+                    $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $cpos), 22);
                 }
             }
         }
@@ -217,16 +215,6 @@ class UpdaterEvent extends PluginTask
     }
 
     /**
-     * @param int $t_delay
-     * @return UpdaterEvent
-     */
-    public function setTDelay(int $t_delay): UpdaterEvent
-    {
-        $this->t_delay = $t_delay;
-        return $this;
-    }
-
-    /**
      * @param array $ids
      * @return UpdaterEvent
      */
@@ -234,6 +222,22 @@ class UpdaterEvent extends PluginTask
     {
         $this->ids = $ids;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCanTakeItem(): bool
+    {
+        return $this->canTakeItem;
+    }
+
+    /**
+     * @param bool $canTakeItem
+     */
+    public function setCanTakeItem(bool $canTakeItem)
+    {
+        $this->canTakeItem = $canTakeItem;
     }
 
 }
