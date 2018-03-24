@@ -8,13 +8,9 @@ description: This plugins adds MysteryCrates with op items.
 website: https://github.com/JackMD/MysteryCrate
 
 permissions:
-  mysterycrate:
-   default: op
-   description: "Root permission"
-   childern:
-    mysterycrate.command.key:
-     default: op
-     description: "Allows use of /key command"
-    mysterycrate.command.xyz:
-     default: op
-     descrption: "Allows use of /xyz command"
+ mc.command.key:
+  default: op
+  description: "Allows use of /key command"
+ mc.command.xyz:
+  default: op
+  descrption: "Allows use of /xyz command"
