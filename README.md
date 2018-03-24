@@ -15,6 +15,7 @@
  - Along with FloatingText a constant show of **Particles** is performed above the crate.
  - Upon **opening** the crate **another** set of **Particles** is generated telling player someone opened the crate.
  - Crate name can be set directly through `config.yml`.
+ - Ability to give enchanted item to players.
  - Fool proof. Players cannot grief it.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
