@@ -37,8 +37,8 @@
  - [ ] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
  - [ ] **(*Low Priority*)** Add support for making more than one crate.
 ### Info
-  - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://www.youtube.com/watch?v=JPkGL9R9prY&app=desktop) channel.
+  - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
   - Support is appreciated.
   - Please don't hesitate to ask questions or report bug report in issues section.
 ### Video
-[![YouTube](https://img.youtube.com/vi/JPkGL9R9prY/0.jpg)](https://m.youtube.com/watch?v=JPkGL9R9prY)
+[![YouTube](https://img.youtube.com/vi/x_mc-ocrdDU/0.jpg)](https://youtu.be/x_mc-ocrdDU)
