@@ -28,6 +28,11 @@
  - Reload the server and you are good to go.
  - To get the crate key use `/key [player] [amount]` in-game and then tap the crate with it.
  - To access the `xyz` locator do `/xyz` in-game.
+### Commands and Permissions
+|Description|Command|Permission|Default|
+|:--:|:--:|:--:|:--:|
+|Crate Key|`/key [playerName] [amount]`|`mc.command.key`|`op`|
+|Coordinates Locator|`/xyz`|`mc.command.xyz`|`op`|
 ### TODO's
  - [x] Add basic particles.
  - [x] Finish working on commands.
