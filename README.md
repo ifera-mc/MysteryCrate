@@ -21,7 +21,7 @@
  - This plugin depends on [VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments) for adding enchants on the items. **Remember this plugin won't load without it.** So make sure to have it.
  - Get the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) and drop the into your `plugins` folder.
  - Next navigate to the `config.yml` file and mention the `XYZ` coordinates of the chest.
- - For this purpose use `/xyz` command in-game and then tap the chest you want to set as a crate to get its coordinates.
+ - For this purpose use `/xyz` command in-game and then tap the **chest** `(ID : 54)` you want to set as a crate to get its coordinates.
  - Enter those X, Y and Z coordinates in `config.yml` under `X`, `Y` and `Z` headings.
  - **Make sure that name of the world where crate is located is same as the world folder name.**
  - Now mention the `name` of the`world` where the crate is located in `crateWorld`.
