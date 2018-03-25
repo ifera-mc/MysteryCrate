@@ -21,7 +21,6 @@ use JackMD\MysteryCrate\Particles\ParticleTask;
 use pocketmine\block\Block;
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
-use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -73,6 +72,9 @@ class Main extends PluginBase implements Listener
     private $cY;
     private $cZ;
 
+    /**
+     * @return Main
+     */
     public static function getInstance(): Main
     {
         return self::$instance;
@@ -117,12 +119,12 @@ class Main extends PluginBase implements Listener
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new ParticleTask($this, $this->particle, $this->crateWorld, $radius, $v3), 5)->getTaskId();
             }
 
-            if($this->getServer()->getLevelByName($this->crateWorld) !== NULL) {
+            if ($this->getServer()->getLevelByName($this->crateWorld) !== NULL) {
 
-            $taskCloud = new CloudRain($this);
-            $this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
-            
-            }else{
+                $taskCloud = new CloudRain($this);
+                $this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
+
+            } else {
                 $this->getServer()->getLogger()->critical("Please set the crateWorld and X, Y, Z coordinates in the config.yml");
             }
 
@@ -174,7 +176,9 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         return $amount;
     }
 
-    public function getCrate(){}
+    public function getCrate()
+    {
+    }
 
     /**
      * @param Player $player
@@ -231,12 +235,16 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
                         $chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));
                         if ($chest instanceof Chest) {
 
+
                             if ($this->isNotInUse()) {
                                 $this->setNotInUse(false);
+
+                                $chest->getInventory()->clearAll();
+
                                 $this->task->chest = $chest;
                                 $chest->setName(TextFormat::LIGHT_PURPLE . TextFormat::BOLD . $this->crateName);
                                 $this->task->player = $event->getPlayer();
-                                $this->task->t_delay = 3 * 20;
+                                $this->task->t_delay = 2 * 20;
 
                                 $this->task->setCanTakeItem(false);
 
@@ -245,7 +253,7 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
                                 $item->setDamage($item->getDamage());
                                 $event->getPlayer()->getInventory()->setItemInHand($item);
                                 $this->task->scheduler = $this->getServer()->getScheduler();
-                                $this->getServer()->getScheduler()->scheduleRepeatingTask($this->task, 3);
+                                $this->getServer()->getScheduler()->scheduleRepeatingTask($this->task, 5);
 
                                 $v3 = $cpos;
                                 $v3->x += 0.5;
@@ -292,14 +300,6 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         return $this->notInUse;
     }
 
-    public function getNotInUse(bool $val)
-    {
-        if ($this->isNotInUse() !== $val) {
-            return false;
-        }
-        return true;
-    }
-
     /**
      * @param bool $notInUse
      */
@@ -314,41 +314,18 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     }
 
     /**
-     * @param InventoryOpenEvent $event
-     */
-    public function onInventoryOpen(InventoryOpenEvent $event)
-    {
-
-        $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
-        $chest = $event->getPlayer()->getLevel()->getBlock($cpos);
-        $chestTile = $event->getPlayer()->getLevel()->getTile(new Vector3($chest->getX(), $chest->getY(), $chest->getZ()));
-
-        if ($chestTile instanceof Chest) {
-            $chestInv = $event->getInventory()->getViewers();
-            if ($chestInv !== []) {
-                $event->setCancelled();
-            }
-        }
-
-    }
-
-    /**
      * @param InventoryCloseEvent $event
      */
     public function onInventoryClose(InventoryCloseEvent $event)
     {
+        if ($event->getInventory() instanceof ChestInventory) {
+            $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
+            $chestTile = $event->getPlayer()->getLevel()->getTile($cpos);
 
-        $cpos = new Vector3((int)$this->X, (int)$this->Y, (int)$this->Z);
-        $chest = $event->getPlayer()->getLevel()->getBlock($cpos);
-        $chestTile = $event->getPlayer()->getLevel()->getTile(new Vector3($chest->getX(), $chest->getY(), $chest->getZ()));
-
-        if ($chestTile instanceof Chest) {
-            $chestInv = $event->getInventory()->getViewers();
-            if ($chestInv == []) {
-                $event->setCancelled();
+            if ($chestTile instanceof Chest) {
+                $this->setNotInUse(true);
+                $this->getServer()->getScheduler()->cancelTask($this->task->getTaskId());
             }
-            $this->setNotInUse(true);
-            $this->getServer()->getScheduler()->cancelTask($this->task->getTaskId());
         }
     }
 
@@ -405,6 +382,9 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
         return $key;
     }
 
+    /**
+     * @param PlayerJoinEvent $ev
+     */
     public function PlayerJoinEvent(PlayerJoinEvent $ev)
     {
         $lev = $ev->getPlayer()->getLevel();
@@ -415,6 +395,9 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
 
     }
 
+    /**
+     * @param EntityLevelChangeEvent $event
+     */
     public function onLevelChange(EntityLevelChangeEvent $event)
     {
 
