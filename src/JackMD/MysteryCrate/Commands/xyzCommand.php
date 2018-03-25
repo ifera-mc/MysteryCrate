@@ -59,7 +59,7 @@ class xyzCommand extends PluginCommand
      * @param array $args
      * @return bool|mixed
      */
-    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    public function execute(CommandSender $sender, string $commandLabel, array $args) : bool
     {
         $plugin = $this->getPlugin();
         $key = Item::get(Item::GOLD_AXE, 0, 1);
@@ -74,7 +74,7 @@ class xyzCommand extends PluginCommand
                         $sender->getInventory()->addItem($key);
                         $sender->sendMessage(TextFormat::GREEN . "You have recieved " . TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator." . TextFormat::RESET);
                         $sender->sendMessage(TextFormat::LIGHT_PURPLE . "Tap a block with it to find its coordinates.");
-
+                        return true;
                     }
                 }
 
