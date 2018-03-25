@@ -30,6 +30,14 @@ class ParticleTask extends PluginTask
     private $level;
     private $particle;
 
+    /**
+     * ParticleTask constructor.
+     * @param Main $plugin
+     * @param $particle
+     * @param $level
+     * @param $radius
+     * @param $center
+     */
     public function __construct(Main $plugin, $particle, $level, $radius, $center)
     {
         parent::__construct($plugin);
@@ -39,8 +47,12 @@ class ParticleTask extends PluginTask
         $this->radius = (float)$radius;
         $this->center = $center;
         $this->particle = $particle;
+        $this->radius = $radius;
     }
 
+    /**
+     * @param int $tick
+     */
     public function onRun(int $tick)
     {
         if ($this->level instanceof Level) {
