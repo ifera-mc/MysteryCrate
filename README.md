@@ -40,7 +40,7 @@
  - [ ] Add options for more particles.
  - [ ] Add custom `items.yml`to declare custom items to be given to players.
  - [ ] Make setup a bit easier by making the plugin get coordinates itself.
- - [ ] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
+ - [X] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
  - [ ] **(*Low Priority*)** Add support for making more than one crate.
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
