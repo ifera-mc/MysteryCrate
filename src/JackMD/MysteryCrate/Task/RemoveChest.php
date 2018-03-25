@@ -24,12 +24,19 @@ class RemoveChest extends PluginTask
     private $plugin;
     public $chest;
 
+    /**
+     * RemoveChest constructor.
+     * @param Main $plugin
+     */
     public function __construct(Main $plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param int $tick
+     */
     public function onRun(int $tick)
     {
         $level = $this->plugin->getServer()->getLevelByName($this->plugin->crateWorld);

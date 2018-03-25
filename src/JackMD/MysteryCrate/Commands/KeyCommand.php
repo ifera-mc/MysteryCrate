@@ -56,26 +56,26 @@ class KeyCommand extends PluginCommand
      * @param array $args
      * @return bool|mixed
      */
-    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    public function execute(CommandSender $sender, string $commandLabel, array $args) : bool
     {
         if ($sender->isOp() || $sender->hasPermission("mc.command.key")) {
             $plugin = $this->getPlugin();
             if ($plugin instanceof Main) {
                 if (!isset($args[0])) {
                     $sender->sendMessage(TextFormat::RED . "Usage: /key [player] [amount]");
-                    return false;
+                    return true;
                 }
                 $target = $sender;
                 if (isset($args[0])) {
                     $target = $plugin->getServer()->getPlayer($args[0]);
                     if (!$target instanceof Player) {
                         $sender->sendMessage(TextFormat::RED . "Invalid player. Try again.");
-                        return false;
+                        return true;
                     }
                 } else {
                     if (!$target instanceof Player) {
                         $sender->sendMessage(TextFormat::RED . "Please specify a player.");
-                        return false;
+                        return true;
                     }
                 }
                 if (isset($args[1]) and is_numeric($args[1])) {

@@ -32,7 +32,7 @@ use pocketmine\utils\TextFormat;
 class UpdaterEvent extends PluginTask
 {
     public $canTakeItem = false;
-    public $t_delay = 3 * 20;
+    public $t_delay = 2 * 20;
     public $ids = array(7, 49, 466, 260, 322, 352, 364, 264, 310, 311, 312, 313, 266, 265, 264, 388, 57, 41, 276, 278);
     public $scheduler;
     public $main;
@@ -40,6 +40,8 @@ class UpdaterEvent extends PluginTask
     public $plugin;
     public $item;
     public $player;
+
+    /** @var Chest */
     public $chest;
 
     /**
@@ -62,41 +64,27 @@ class UpdaterEvent extends PluginTask
             if ($this->t_delay >= 0) {
                 if ($this->chest instanceof Chest) {
 
-                    $this->setItem(0, 106, 1);
-                    $this->setItem(1, 106, 1);
-                    $this->setItem(2, 106, 1);
-                    $this->setItem(3, 106, 1);
+                    $i = 0;
+                    while ($i < 27) {
+                        if($i != 4 && $i != 10 && $i != 11 && $i != 12 && $i != 13 && $i != 14 && $i != 15 && $i != 16 && $i != 22) {
+                            $this->setItem($i, 106, 1);
+                        }
+                        $i++;
+                    }
 
                     $this->setItem(4, 208, 1);
-
-                    $this->setItem(5, 106, 1);
-                    $this->setItem(6, 106, 1);
-                    $this->setItem(7, 106, 1);
-                    $this->setItem(8, 106, 1);
-                    $this->setItem(9, 106, 1);
-                    $this->setItem(17, 106, 1);
-                    $this->setItem(18, 106, 1);
-                    $this->setItem(19, 106, 1);
-                    $this->setItem(20, 106, 1);
-                    $this->setItem(21, 106, 1);
-
                     $this->setItem(22, 208, 1);
-
-                    $this->setItem(23, 106, 1);
-                    $this->setItem(24, 106, 1);
-                    $this->setItem(25, 106, 1);
-                    $this->setItem(26, 106, 1);
 
                     $block = $this->chest;
 
                     $block->getLevel()->addSound(new ClickSound($block), [$this->player]);
 
-                    $this->setItem(10, $this->ids[(int)rand(0, 18)], 1);
-                    $this->setItem(11, $this->ids[(int)rand(0, 18)], 1);
-                    $this->setItem(12, $this->ids[(int)rand(0, 18)], 1);
-                    $this->setItem(13, $this->ids[(int)rand(0, 18)], 1);
-                    $this->setItem(14, $this->ids[(int)rand(0, 18)], 1);
-                    $this->setItem(15, $this->ids[(int)rand(0, 18)], 1);
+                    $this->setItem(10, $this->chest->getInventory()->getItem(11)->getId(), 1);
+                    $this->setItem(11, $this->chest->getInventory()->getItem(12)->getId(), 1);
+                    $this->setItem(12, $this->chest->getInventory()->getItem(13)->getId(), 1);
+                    $this->setItem(13, $this->chest->getInventory()->getItem(14)->getId(), 1);//reward
+                    $this->setItem(14, $this->chest->getInventory()->getItem(15)->getId(), 1);
+                    $this->setItem(15, $this->chest->getInventory()->getItem(16)->getId(), 1);
                     $this->setItem(16, $this->ids[(int)rand(0, 18)], 1);
                 }
             }
@@ -118,14 +106,14 @@ class UpdaterEvent extends PluginTask
 
                     $slot13 = $this->chest->getInventory()->getItem(13);
 
-                    if($this->player instanceof Player){
+                    if ($this->player instanceof Player) {
                         $this->player->getInventory()->addItem($slot13);
-                        $this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() .  TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount(). ")" . TextFormat::GREEN . " from " . $this->plugin->crateName);
+                        $this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . $this->plugin->crateName);
                     }
 
                     $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin, $cpos), 20);
+                    $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $cpos), 24);
 
-                    $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $cpos), 22);
                 }
             }
         }
@@ -215,16 +203,6 @@ class UpdaterEvent extends PluginTask
     }
 
     /**
-     * @param array $ids
-     * @return UpdaterEvent
-     */
-    public function setIds(array $ids): UpdaterEvent
-    {
-        $this->ids = $ids;
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isCanTakeItem(): bool
@@ -238,6 +216,22 @@ class UpdaterEvent extends PluginTask
     public function setCanTakeItem(bool $canTakeItem)
     {
         $this->canTakeItem = $canTakeItem;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIds(): array
+    {
+        return $this->ids;
+    }
+
+    /**
+     * @param array $ids
+     */
+    public function setIds(array $ids)
+    {
+        $this->ids = $ids;
     }
 
 }
