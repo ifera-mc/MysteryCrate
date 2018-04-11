@@ -46,6 +46,8 @@ class PutChest extends PluginTask
         $cpos = new Vector3($cx, $cy, $cz);
 
         $level->setBlock($cpos, Block::get(54));
+        
+        $this->plugin->setNotInUse(true);
 
     }
 }
