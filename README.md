@@ -1,10 +1,9 @@
 # MysteryCrate
-[![HitCount](http://hits.dwyl.io/JackMD/MysteryCrate.svg)](http://hits.dwyl.io/JackMD/MysteryCrate)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/JackMD/MysteryCrate.svg)](http://isitmaintained.com/project/JackMD/MysteryCrate "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/JackMD/MysteryCrate.svg)](http://isitmaintained.com/project/JackMD/MysteryCrate "Percentage of issues still open")
-[![GitHub license](https://img.shields.io/github/license/JackMD/MysteryCrate.svg)](https://github.com/JackMD/MysteryCrate/blob/master/LICENSE)
 
-[![Poggit-Ci](https://poggit.pmmp.io/ci.shield/JackMD/MysteryCrate/MysteryCrate)](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate)
+|HitCount|License|Poggit|
+|:--:|:--:|:--:|
+|[![HitCount](http://hits.dwyl.io/JackMD/MysteryCrate.svg)](http://hits.dwyl.io/JackMD/MysteryCrate)|[![GitHub license](https://img.shields.io/github/license/JackMD/MysteryCrate.svg)](https://github.com/JackMD/MysteryCrate/blob/master/LICENSE)|[![Poggit-Ci](https://poggit.pmmp.io/ci.shield/JackMD/MysteryCrate/MysteryCrate)](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate)|
+
 [![](https://poggit.pmmp.io/shield.dl.total/MysteryCrate)](https://poggit.pmmp.io/p/MysteryCrate)
 
 ### A MysteryCrate plugin for PocketMine-MP // McPe 1.2
