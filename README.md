@@ -1,9 +1,8 @@
 # MysteryCrate
 
-|HitCount|License|Poggit|
+| HitCount | License | Poggit |
 |:--:|:--:|:--:|
 |[![HitCount](http://hits.dwyl.io/JackMD/MysteryCrate.svg)](http://hits.dwyl.io/JackMD/MysteryCrate)|[![GitHub license](https://img.shields.io/github/license/JackMD/MysteryCrate.svg)](https://github.com/JackMD/MysteryCrate/blob/master/LICENSE)|[![Poggit-Ci](https://poggit.pmmp.io/ci.shield/JackMD/MysteryCrate/MysteryCrate)](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate)|
-[![](https://poggit.pmmp.io/shield.dl.total/MysteryCrate)](https://poggit.pmmp.io/p/MysteryCrate)
 
 ### A MysteryCrate plugin for PocketMine-MP // McPe 1.2
 ### Features
@@ -39,7 +38,7 @@
  - [ ] Add custom `items.yml`to declare custom items to be given to players.
  - [ ] Make setup a bit easier by making the plugin get coordinates itself.
  - [X] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
- - [ ] **(*Low Priority*)** Add support for making more than one crate.
+ - [ ] **(*Low Priority*)** Add support for making more than one crate. 
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
   - Support is appreciated.
