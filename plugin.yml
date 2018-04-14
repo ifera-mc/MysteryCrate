@@ -1,6 +1,6 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
-api: [3.0.0-ALPHA11]
+api: [3.0.0-ALPHA11, 3.0.0-ALPHA12]
 version: 3.0.0
 authors: [JackMD]
 load: POSTWORLD
