@@ -17,7 +17,6 @@ namespace JackMD\MysteryCrate;
 use JackMD\MysteryCrate\Commands\KeyCommand;
 use JackMD\MysteryCrate\Commands\xyzCommand;
 use JackMD\MysteryCrate\Particles\CloudRain;
-use JackMD\MysteryCrate\Particles\ParticleTask;
 use pocketmine\block\Block;
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
@@ -36,6 +35,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\tile\Chest;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 /**
@@ -44,19 +44,8 @@ use pocketmine\utils\TextFormat;
  */
 class Main extends PluginBase implements Listener
 {
-
-    private static $instance;
-
     public $notInUse = true;
-
-    public $item;
-
-    /** @var UpdaterEvent */
     public $task;
-
-    /** @var ParticleTask */
-    public $particle;
-
     public $crateName;
     public $crateHover;
     public $keyName;
@@ -67,34 +56,32 @@ class Main extends PluginBase implements Listener
     public $Y;
     public $Z;
 
-    public $textParticle;
+    public $crates;
+    public $crateItems;
+    public $crateBlocks;
+
+    private $textParticle;
     private $cX;
     private $cY;
     private $cZ;
 
-    /**
-     * @return Main
-     */
-    public static function getInstance(): Main
-    {
-        return self::$instance;
-    }
-
     public function onLoad()
     {
-        $this->getLogger()->info(TextFormat::YELLOW . "MysteryCrate is loading...");
-        $this->getLogger()->info(TextFormat::YELLOW . "Make sure you have VanillaEnchantment plugin.");
+        $this->getLogger()->info(TextFormat::YELLOW . base64_decode("TXlzdGVyeUNyYXRlIGlzIGxvYWRpbmcuLi4="));
+        $this->getLogger()->info(TextFormat::YELLOW . base64_decode("TWFrZSBzdXJlIHlvdSBoYXZlIFZhbmlsbGFFbmNoYW50bWVudHMgcGx1Z2luLg=="));
     }
 
     public function onEnable()
     {
         $this->getServer()->getPluginManager()->registerEvents(($this), $this);
+
         if (!is_dir($this->getDataFolder())) {
             mkdir($this->getDataFolder());
         }
 
-        if ($this->getServer()->getPluginManager()->getPlugin("VanillaEnchantments")) {
+        if ($this->getServer()->getPluginManager()->getPlugin(base64_decode("VmFuaWxsYUVuY2hhbnRtZW50cw=="))) {
 
+            $this->initCrates();
             $this->saveDefaultConfig();
             $this->crateName = $this->getConfig()->getNested("crateName");
             $this->crateHover = $this->getConfig()->getNested("crateHover");
@@ -113,71 +100,57 @@ class Main extends PluginBase implements Listener
 
             $this->initTextParticle();
 
-            $radius = 3;
-            if ($radius > 0) {
-                $v3 = new Vector3($this->X + 0.5, $this->Y + 2, $this->Z + 0.5);
-                $this->getServer()->getScheduler()->scheduleRepeatingTask(new ParticleTask($this, $this->particle, $this->crateWorld, $radius, $v3), 5)->getTaskId();
+            if ($this->getConfig()->getNested("ShowParticle") !== false) {
+                if ($this->getServer()->getLevelByName($this->crateWorld) !== NULL) {
+                    $this->getServer()->getScheduler()->scheduleRepeatingTask(new CloudRain($this), 5);
+
+                } else {
+                    $this->getServer()->getLogger()->critical(base64_decode("UGxlYXNlIHNldCB0aGUgY3JhdGVXb3JsZCBhbmQgWCwgWSwgWiBjb29yZGluYXRlcyBpbiB0aGUgY29uZmlnLnltbA=="));
+                }
             }
 
-            if ($this->getServer()->getLevelByName($this->crateWorld) !== NULL) {
-
-                $taskCloud = new CloudRain($this);
-                $this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
-
-            } else {
-                $this->getServer()->getLogger()->critical("Please set the crateWorld and X, Y, Z coordinates in the config.yml");
-            }
-
-            $this->getLogger()->info(TextFormat::GREEN . "
-___  ___          _                  _____           _       
-|  \/  |         | |                /  __ \         | |      
-| .  . |_   _ ___| |_ ___ _ __ _   _| /  \/_ __ __ _| |_ ___ 
-| |\/| | | | / __| __/ _ | '__| | | | |   | '__/ _` | __/ _ \
-| |  | | |_| \__ | ||  __| |  | |_| | \__/| | | (_| | ||  __/
-\_|  |_/\__, |___/\__\___|_|   \__, |\____|_|  \__,_|\__\___|
-         __/ |                  __/ |                        
-        |___/                  |___/
-        
-Enabled MysteryCrate by JackMD for PocketMine-MPs-API
-        ");
+            $this->getLogger()->info(TextFormat::GREEN . base64_decode("Cl9fXyAgX19fICAgICAgICAgIF8gICAgICAgICAgICAgICAgICBfX19fXyAgICAgICAgICAgXyAgICAgICAKfCAgXC8gIHwgICAgICAgICB8IHwgICAgICAgICAgICAgICAgLyAgX18gXCAgICAgICAgIHwgfCAgICAgIAp8IC4gIC4gfF8gICBfIF9fX3wgfF8gX19fIF8gX18gXyAgIF98IC8gIFwvXyBfXyBfXyBffCB8XyBfX18gCnwgfFwvfCB8IHwgfCAvIF9ffCBfXy8gXyB8ICdfX3wgfCB8IHwgfCAgIHwgJ19fLyBfYCB8IF9fLyBfIFwKfCB8ICB8IHwgfF98IFxfXyB8IHx8ICBfX3wgfCAgfCB8X3wgfCBcX18vfCB8IHwgKF98IHwgfHwgIF9fLwpcX3wgIHxfL1xfXywgfF9fXy9cX19cX19ffF98ICAgXF9fLCB8XF9fX198X3wgIFxfXyxffFxfX1xfX198CiAgICAgICAgIF9fLyB8ICAgICAgICAgICAgICAgICAgX18vIHwgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICB8X19fLyAgICAgICAgICAgICAgICAgIHxfX18vCiAgICAgICAgCkVuYWJsZWQgTXlzdGVyeUNyYXRlIGJ5IEphY2tNRCBmb3IgUG9ja2V0TWluZS1NUHMtQVBJCiAgICAgICAg"));
         } else {
-            $this->getLogger()->error("VanillaEnchantments plugin not found.");
-            $this->getLogger()->error("This plugin depends on it to add enchants on items.");
-            $this->getLogger()->error("This will continue until PocketMine-MP registers enchants.");
-            $this->onDisable();
-        }
-    }
-
-    private function initTextParticle()
-    {
-        if (!$this->textParticle instanceof FloatingTextParticle) {
-
-            $x = $this->X + 0.5;
-            $y = $this->Y + 1;
-            $z = $this->Z + 0.5;
-
-            $pos = new Vector3($x, $y, $z);
-
-            $this->textParticle = new FloatingTextParticle($pos, '', $this->crateHover . TextFormat::RESET);
+            $this->getLogger()->error(base64_decode("VmFuaWxsYUVuY2hhbnRtZW50cyBwbHVnaW4gbm90IGZvdW5kLg=="));
+            $this->getLogger()->error(base64_decode("VGhpcyBwbHVnaW4gZGVwZW5kcyBvbiBpdCB0byBhZGQgZW5jaGFudHMgb24gaXRlbXMu"));
+            $this->getLogger()->error(base64_decode("VGhpcyB3aWxsIGNvbnRpbnVlIHVudGlsIFBvY2tldE1pbmUtTVAgcmVnaXN0ZXJzIGVuY2hhbnRzLg=="));
+            $this->getPluginLoader()->disablePlugin($this);
         }
     }
 
     public function onDisable()
     {
-        $this->getLogger()->info(TextFormat::RED . "MysteryCrate Disabled!");
+        $this->getLogger()->info(TextFormat::RED . base64_decode("TXlzdGVyeUNyYXRlIERpc2FibGVkIQ=="));
+    }
+
+    public function initCrates()
+    {
+        $this->saveResource("items.yml");
+        $file = new Config($this->getDataFolder() . "items.yml");
+        foreach ($file->getNested("CrateItems") as $type => $values) {
+            $this->crates[$type] = $values;
+            $this->crateItems[$type] = $values["Items"];
+            $this->crateBlocks[$values["block"]] = $type;
+        }
     }
 
     /**
-     * @return int
+     * @param string $type
+     * @return mixed
      */
-    public function getAmount(): int
+    public function getCrateItems(string $type)
     {
-        $amount = 1;
-        return $amount;
+        return $this->crateItems[$type];
     }
 
-    public function getCrate()
+    /**
+     * @param int $id
+     * @param int $meta
+     * @return bool
+     */
+    public function isCrateBlock(int $id, int $meta)
     {
+        return isset($this->crateBlocks[$id . ":" . $meta]) ? $this->crateBlocks[$id . ":" . $meta] : false;
     }
 
     /**
@@ -209,11 +182,20 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     }
 
     /**
+     * @param Item $item
+     * @return bool
+     */
+    public function isCrateKey(Item $item)
+    {
+        $key = $item->getId() === 339 && $item->getDamage() === 50 && $item->getCustomName() === TextFormat::BOLD . TextFormat::GOLD . $this->keyName . TextFormat::RED . " Key" . TextFormat::RESET && $item->hasEnchantment(255, 1);
+        return $key;
+    }
+
+    /**
      * @param PlayerInteractEvent $event
      */
     public function onInteract(PlayerInteractEvent $event)
     {
-
         $player = $event->getPlayer();
         $heldItem = $player->getInventory()->getItemInHand();
         $block = $event->getBlock();
@@ -235,7 +217,6 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
                         $chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));
                         if ($chest instanceof Chest) {
 
-
                             if ($this->isNotInUse()) {
                                 $this->setNotInUse(false);
 
@@ -255,17 +236,16 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
                                 $this->task->scheduler = $this->getServer()->getScheduler();
                                 $this->getServer()->getScheduler()->scheduleRepeatingTask($this->task, 5);
 
-                                $v3 = $cpos;
-                                $v3->x += 0.5;
-                                $v3->y += 1.2;
-                                $v3->z += 0.5;
-                                for ($i = 0; $i <= 15; $i++) {
-                                    $scatter = 0.15;
-                                    $vector3 = $v3;
-                                    $vector3->x += $this->randomFloat(-$scatter, $scatter);
-                                    $vector3->y += $this->randomFloat(-0.1, 0.1);
-                                    $vector3->z += $this->randomFloat(-$scatter, $scatter);
-                                    $block->level->addParticle(new LavaParticle($vector3));
+                                //Particle upon opening chest
+                                $cx = $this->X + 0.5;
+                                $cy = $this->Y + 1.2;
+                                $cz = $this->Z + 0.5;
+                                $radius = (int)1;
+                                for ($i = 0; $i < 361; $i += 1.1) {
+                                    $x = $cx + ($radius * cos($i));
+                                    $z = $cz + ($radius * sin($i));
+                                    $pos = new Vector3($x, $cy, $z);
+                                    $block->level->addParticle(new LavaParticle($pos));
                                 }
 
                             } else {
@@ -283,12 +263,31 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     }
 
     /**
+     * @param PlayerInteractEvent $event
+     */
+    public function onTouch(PlayerInteractEvent $event)
+    {
+        $player = $event->getPlayer();
+        $heldItem = $player->getInventory()->getItemInHand();
+        $isXyzLocator = $this->isXyzLocator($heldItem);
+        if ($heldItem == $isXyzLocator and $player->isOp() and $event->getBlock()->getID() != Block::AIR) {
+            {
+                $this->cX = $event->getBlock()->getX();
+                $this->cY = $event->getBlock()->getY();
+                $this->cZ = $event->getBlock()->getZ();
+                $event->setCancelled(true);
+            }
+            $player->sendMessage(TextFormat::GREEN . "Block coordinates are " . TextFormat::YELLOW . "X " . TextFormat::LIGHT_PURPLE . $this->cX . TextFormat::YELLOW . " Y " . TextFormat::LIGHT_PURPLE . $this->cY . TextFormat::YELLOW . " Z " . TextFormat::LIGHT_PURPLE . $this->cZ);
+        }
+    }
+
+    /**
      * @param Item $item
      * @return bool
      */
-    public function isCrateKey(Item $item)
+    public function isXyzLocator(Item $item)
     {
-        $key = $item->getId() === 339 && $item->getDamage() === 50 && $item->getCustomName() === TextFormat::BOLD . TextFormat::GOLD . $this->keyName . TextFormat::RED . " Key" . TextFormat::RESET && $item->hasEnchantment(255, 1);
+        $key = $item->getId() === 286 && $item->getDamage() === 0 && $item->getCustomName() === TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator" . TextFormat::RESET && $item->hasEnchantment(255, 1);
         return $key;
     }
 
@@ -306,11 +305,6 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     public function setNotInUse(bool $notInUse)
     {
         $this->notInUse = $notInUse;
-    }
-
-    private function randomFloat($min = -1.2, $max = 1.2)
-    {
-        return $min + mt_rand() / mt_getrandmax() * ($max - $min);
     }
 
     /**
@@ -354,32 +348,20 @@ Enabled MysteryCrate by JackMD for PocketMine-MPs-API
     }
 
     /**
-     * @param PlayerInteractEvent $event
+     * Adds custom FloatingText
      */
-    public function onTouch(PlayerInteractEvent $event)
+    private function initTextParticle()
     {
-        $player = $event->getPlayer();
-        $heldItem = $player->getInventory()->getItemInHand();
-        $isXyzLocator = $this->isXyzLocator($heldItem);
-        if ($heldItem == $isXyzLocator and $player->isOp() and $event->getBlock()->getID() != Block::AIR) {
-            {
-                $this->cX = $event->getBlock()->getX();
-                $this->cY = $event->getBlock()->getY();
-                $this->cZ = $event->getBlock()->getZ();
-                $event->setCancelled(true);
-            }
-            $player->sendMessage(TextFormat::GREEN . "Block coordinates are " . TextFormat::YELLOW . "X " . TextFormat::LIGHT_PURPLE . $this->cX . TextFormat::YELLOW . " Y " . TextFormat::LIGHT_PURPLE . $this->cY . TextFormat::YELLOW . " Z " . TextFormat::LIGHT_PURPLE . $this->cZ);
-        }
-    }
+        if (!$this->textParticle instanceof FloatingTextParticle) {
 
-    /**
-     * @param Item $item
-     * @return bool
-     */
-    public function isXyzLocator(Item $item)
-    {
-        $key = $item->getId() === 286 && $item->getDamage() === 0 && $item->getCustomName() === TextFormat::BOLD . TextFormat::GOLD . "XYZ" . TextFormat::RED . " Locator" . TextFormat::RESET && $item->hasEnchantment(255, 1);
-        return $key;
+            $x = $this->X + 0.5;
+            $y = $this->Y + 1;
+            $z = $this->Z + 0.5;
+
+            $pos = new Vector3($x, $y, $z);
+
+            $this->textParticle = new FloatingTextParticle($pos, '', $this->crateHover . TextFormat::RESET);
+        }
     }
 
     /**
