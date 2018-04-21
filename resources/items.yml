@@ -1,0 +1,128 @@
+# Items.yml for MysteryCrate by JackMD.
+#
+# A part of this was taken from PiggyCrates by @DaPigGuy.
+#
+# You can only make a single crate at the moment.
+# Multiple crates capability is being worked upon.
+#
+# You can set the items that you want the players
+# to recieve when they open the crate.
+#
+# DONOT DUPLICATE OR CHANGE CrateItems, crate and Items heading.
+# You may however change the stuff after Items heading.
+#
+# DONOT EDIT THIS
+
+CrateItems:
+  crate:
+    Items:
+
+    # Example on how to set the config.
+    #  310:                 | The Item the crate should give. USE ID ONLY.
+    #    name: "G-Helmet"   | Custom name for the item.
+    #    meta: 0            | Meta or Damage value of the Item
+    #    amount: 1          | The amount of Item that player recieves
+    #    enchantments:      | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported.
+    #      protection:      | Name of enchant you wish to apply.
+    #        level: 3       | The level for enchant.
+    #      unbreaking:      | You can set multiple enchants as long as they are registered.
+    #        level: 2       | NOTE: If you donot want enchants simply
+    #                       | remove the enchantments heading.
+    # YOU CAN START EDITING FROM HERE ONWARDS.
+
+      17:
+        name: "Oak Wood"
+        meta: 0
+        amount: 32
+      466:
+        name: "God Apple"
+        meta: 0
+        amount: 5
+      133:
+        name: "Emerald"
+        meta: 0
+        amount: 20
+      322:
+        name: "G-Apple"
+        meta: 0
+        amount: 10
+      7:
+        name: "Bedrock"
+        meta: 0
+        amount: 25
+      42:
+        name: "Iron Block"
+        meta: 0
+        amount: 32
+      41:
+        name: "Gold Block"
+        meta: 0
+        amount: 20
+      310:
+        name: "G-Helmet"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      311:
+        name: "G-ChestPlate"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      312:
+        name: "G-Leggings"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      313:
+        name: "G-Boots"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      368:
+        name: "Ender Pearl"
+        meta: 0
+        amount: 16
+      306:
+        name: "Iron Helmet"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      307:
+        name: "Iron ChestPlate"
+        meta: 0
+        amount: 1
+        enchantments:
+          protection:
+            level: 3
+          unbreaking:
+            level: 2
+      276:
+        name: "God Sword"
+        meta: 0
+        amount: 1
+        enchantments:
+          sharpness:
+            level: 3
+    block: "54:0" # DONOT EDIT THIS VALUE. IT IS FOR FUTURE USE.
+
+---
