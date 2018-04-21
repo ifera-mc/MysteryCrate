@@ -81,7 +81,7 @@ class KeyCommand extends PluginCommand
                 if (isset($args[1]) and is_numeric($args[1])) {
                     $amount = (int)$args[1];
                 } else {
-                    $amount = $plugin->getAmount();
+                    $amount = (int)1;
                 }
                 $plugin->giveKey($target, $amount);
 
