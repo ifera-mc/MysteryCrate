@@ -33,12 +33,8 @@ class UpdaterEvent extends PluginTask
 {
     public $canTakeItem = false;
     public $t_delay = 2 * 20;
-    public $ids = array(7, 49, 466, 260, 322, 352, 364, 264, 310, 311, 312, 313, 266, 265, 264, 388, 57, 41, 276, 278);
     public $scheduler;
-    public $main;
-    public $level;
     public $plugin;
-    public $item;
     public $player;
 
     /** @var Chest */
@@ -66,7 +62,7 @@ class UpdaterEvent extends PluginTask
 
                     $i = 0;
                     while ($i < 27) {
-                        if($i != 4 && $i != 10 && $i != 11 && $i != 12 && $i != 13 && $i != 14 && $i != 15 && $i != 16 && $i != 22) {
+                        if ($i != 4 && $i != 10 && $i != 11 && $i != 12 && $i != 13 && $i != 14 && $i != 15 && $i != 16 && $i != 22) {
                             $this->setItem($i, 106, 1);
                         }
                         $i++;
@@ -76,16 +72,46 @@ class UpdaterEvent extends PluginTask
                     $this->setItem(22, 208, 1);
 
                     $block = $this->chest;
-
                     $block->getLevel()->addSound(new ClickSound($block), [$this->player]);
 
-                    $this->setItem(10, $this->chest->getInventory()->getItem(11)->getId(), 1);
-                    $this->setItem(11, $this->chest->getInventory()->getItem(12)->getId(), 1);
-                    $this->setItem(12, $this->chest->getInventory()->getItem(13)->getId(), 1);
-                    $this->setItem(13, $this->chest->getInventory()->getItem(14)->getId(), 1);//reward
-                    $this->setItem(14, $this->chest->getInventory()->getItem(15)->getId(), 1);
-                    $this->setItem(15, $this->chest->getInventory()->getItem(16)->getId(), 1);
-                    $this->setItem(16, $this->ids[(int)rand(0, 18)], 1);
+                    $level = $this->plugin->getServer()->getLevelByName($this->plugin->crateWorld);
+                    $cx = $this->plugin->X;
+                    $cy = $this->plugin->Y;
+                    $cz = $this->plugin->Z;
+                    $cpos = new Vector3($cx, $cy, $cz);
+                    $b = $level->getBlock($cpos);
+                    $type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
+                    $drops = array_rand($this->plugin->getCrateItems($type), 1);
+                    if (!is_array($drops)) {
+                        $drops = [$drops];
+                    }
+                    foreach ($drops as $drop) {
+                        $values = $this->plugin->getCrateItems($type)[$drop];
+                        $i = Item::get($drop, $values["meta"], $values["amount"]);
+                        if (isset($values["enchantments"])) {
+                            foreach ($values["enchantments"] as $enchantment => $enchantmentinfo) {
+                                $level = $enchantmentinfo["level"];
+                                if (!is_null($ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants")) && !is_null($enchant = \PiggyCustomEnchants\CustomEnchants\CustomEnchants::getEnchantmentByName($enchantment))) {
+                                    $i = $ce->addEnchantment($i, $enchantment, $level);
+                                } else {
+                                    if (!is_null($enchant = Enchantment::getEnchantmentByName($enchantment))) {
+                                        $i->addEnchantment(new EnchantmentInstance($enchant, $level));
+                                    }
+                                }
+                            }
+                        }
+                        $i->setCustomName($values["name"]);
+
+                        $cInv = $this->chest->getInventory();
+
+                        $this->setItemS(10, $this->chest->getInventory()->getItem(11), $cInv->getItem(11)->getCount());
+                        $this->setItemS(11, $this->chest->getInventory()->getItem(12), $cInv->getItem(12)->getCount());
+                        $this->setItemS(12, $this->chest->getInventory()->getItem(13), $cInv->getItem(13)->getCount());
+                        $this->setItemS(13, $this->chest->getInventory()->getItem(14), $cInv->getItem(14)->getCount());//reward
+                        $this->setItemS(14, $this->chest->getInventory()->getItem(15), $cInv->getItem(15)->getCount());
+                        $this->setItemS(15, $this->chest->getInventory()->getItem(16), $cInv->getItem(16)->getCount());
+                        $this->setItemS(16, $i, $i->getCount());
+                    }
                 }
             }
             if ($this->t_delay == -1) {
@@ -94,7 +120,6 @@ class UpdaterEvent extends PluginTask
                     $this->setItem(10, 0, 0);
                     $this->setItem(11, 0, 0);
                     $this->setItem(12, 0, 0);
-
                     $this->setItem(14, 0, 0);
                     $this->setItem(15, 0, 0);
                     $this->setItem(16, 0, 0);
@@ -129,74 +154,22 @@ class UpdaterEvent extends PluginTask
     {
         $item = Item::get($id);
         $item->setCount($count);
-        if ($id === 260) {
-            $item->setCount((int)rand(20, 64));
-        }
-        if ($id === 7) {
-            $item->setCount((int)rand(5, 15));
-        }
-        if ($id === 49) {
-            $item->setCount((int)rand(5, 30));
-        }
-        if ($id === 466) {
-            $item->setCount((int)rand(1, 8));
-        }
-        if ($id === 7) {
-            $item->setCount((int)rand(5, 15));
-        }
-        if ($id === 322 || $id == 266 || $id == 265 || $id == 264) {
-            $item->setCount((int)rand(5, 15));
-        }
-        if ($id === 352) {
-            $item->setCount((int)rand(35, 64));
-        }
-        if ($id === 388) {
-            $item->setCount(1);
-        }
-        if ($id === 364) {
-            $item->setCount((int)rand(25, 64));
-        }
-        if ($item->getId() === 106) {
-            if ((int)rand(1, 20) == 2) {
-                $enchant = Enchantment::getEnchantment(0);
-                $item->addEnchantment(new EnchantmentInstance($enchant, 1));
-            }
-        }
-        if ($id === 276 || $id === 310 || $id === 311 || $id === 312 || $id === 313 || $id === 278 || $id === 57 || $id === 41) {
-            $item->setCount(1);
-            if ($id === 278 && (int)rand(1, 3) == 1) {
-                $ef = Enchantment::getEnchantment(15);
-                $item->addEnchantment(new EnchantmentInstance($ef, ((int)rand(3, 5))));
-                if ((int)rand(1, 7) == 3) {
-                    $dura = Enchantment::getEnchantment(17);
-                    $item->addEnchantment(new EnchantmentInstance($dura, 4));
-                }
-                if ((int)rand(1, 5) == 3) {
-                    $for = Enchantment::getEnchantment(18);
-                    $item->addEnchantment(new EnchantmentInstance($for, ((int)rand(2, 4))));
-                }
-            }
-            if ($id === 276 && (int)rand(1, 3) == 2) {
-                $sharp = Enchantment::getEnchantment(9);
-                $item->addEnchantment(new EnchantmentInstance($sharp, ((int)rand(2, 6))));
-                if ((int)rand(1, 2) == 1) {
-                    $knock = Enchantment::getEnchantment(12);
-                    $item->addEnchantment(new EnchantmentInstance($knock, ((int)rand(1, 3))));
-                }
-                if ((int)rand(1, 3) == 2) {
-                    $dura = Enchantment::getEnchantment(17);
-                    $item->addEnchantment(new EnchantmentInstance($dura, ((int)rand(2, 4))));
-                }
-            }
-            foreach (array(310, 311, 312, 313) as $armors) {
-                if ($id == $armors) {
-                    $protect = Enchantment::getEnchantment(0);
-                    $item->addEnchantment(new EnchantmentInstance($protect, ((int)rand(3, 6))));
-                }
-            }
-        }
         $item->setDamage($dmg);
+        if ($this->chest instanceof Chest) {
+            $this->chest->getInventory()->setItem($index, $item);
+        }
+    }
 
+    /**
+     * @param $index
+     * @param Item $item
+     * @param $count
+     * @param int $dmg
+     */
+    public function setItemS($index, Item $item, $count, $dmg = 0)
+    {
+        $item->setCount($count);
+        $item->setDamage($dmg);
         if ($this->chest instanceof Chest) {
             $this->chest->getInventory()->setItem($index, $item);
         }
@@ -217,21 +190,4 @@ class UpdaterEvent extends PluginTask
     {
         $this->canTakeItem = $canTakeItem;
     }
-
-    /**
-     * @return array
-     */
-    public function getIds(): array
-    {
-        return $this->ids;
-    }
-
-    /**
-     * @param array $ids
-     */
-    public function setIds(array $ids)
-    {
-        $this->ids = $ids;
-    }
-
 }
