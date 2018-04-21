@@ -9,6 +9,7 @@
  - This plugin adds custom **crates** to your server.
  - Crates can be opened with a custom **key**.
  - It automatically spawns a custom **floating text** above the crate.
+ - Easy to use `items.yml` for adding custom items to the crate.
  - Along with FloatingText a constant show of **Particles** is performed above the crate.
  - Upon **opening** the crate **another** set of **Particles** is generated telling player someone opened the crate.
  - Crate name can be set directly through `config.yml`.
