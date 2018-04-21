@@ -13,7 +13,7 @@
 crateName: §aMystery §6Box
 
 # Enter the name which would hover above the chest.
-crateHover: §l§c§k|||§r §l§aMystery §6Box §c§k|||§r
+crateHover: §l§c-=+§r §l§aMystery §6Box §c+=-§r
 
 # Enter the name of the Key.
 keyName: Mystery§bCrate
@@ -31,3 +31,8 @@ crateWorld: world
 X: 221
 "Y": 67
 Z: 277
+
+# If your server suffers from bad lagg then set this to false.
+# Setting this to false will remove the paticles above the crate.
+# However the particles on crate opening will not be removed.
+ShowParticle: true
