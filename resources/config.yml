@@ -5,34 +5,39 @@
 #  | |  | | |_| \__ \ ||  __/ |  | |_| | \__/\ | | (_| | ||  __/
 #  \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
 #           __/ |                  __/ |
-#          |___/                  |___/  By JackMD for PMMP
-
+#          |___/                  |___/  By @JackMD for PMMP
+#
+#
+# MysteryCrate, a Crate plugin for PocketMine-MP
+# Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+# Discord: JackMD#3717
+# Twitter: JackMTaylor_
+#  
+# This software is distributed under "GNU General Public License v3.0".
+# This license allows you to use it and/or modify it but you are not at
+# all allowed to sell this plugin at any cost. If found doing so the
+# necessary action required would be taken.
+#  
+# MysteryCrate is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License v3.0 for more details.
+#  
+# You should have received a copy of the GNU General Public License v3.0
+# along with this program. If not, see
+# <https://opensource.org/licenses/GPL-3.0>.
+#  -----------------------------------------------------------------------
+ 
 # use § for color
 
-# Enter what you want the name of the crate to be.
-crateName: §aMystery §6Box
-
-# Enter the name which would hover above the chest.
-crateHover: §l§c-=+§r §l§aMystery §6Box §c+=-§r
-
-# Enter the name of the Key.
-keyName: Mystery§bCrate
+# The ID:META of the key you want to use for opening crates.
+# Its better not to edit this value unless you can edit the source code.
+key: "339:0"
 
 # The the description for the Key.
-descOne: Use this key at /warp crates.
-descTwo: Get a chance to win OP stuff!
+descOne: "Use this key at /warp crates."
+descTwo: "Get a chance to win OP stuff!"
 
 # Enter the name of the FOLDER of the world in which crate is located.
 # Example if your world name is spawn but folder name is spw then enter spw in crateWorld
-crateWorld: world
-
-# Enter the co-ordinates X, Y and Z of the chest/crate.
-# Use /xyz in-game and tap the block with the axe to get its co-ordinates.
-X: 221
-"Y": 67
-Z: 277
-
-# If your server suffers from bad lagg then set this to false.
-# Setting this to false will remove the paticles above the crate.
-# However the particles on crate opening will not be removed.
-ShowParticle: true
+crateWorld: World
