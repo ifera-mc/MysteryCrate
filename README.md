@@ -11,13 +11,13 @@
  - Easy to use `crates.yml` for adding custom items to the crate.
  - Upon **opening** the crate **particles** are generated telling player someone opened the crate.
  - Ability to give enchanted item to players.
- - Ability to give custom enchanted items to players. Requires [PiggyCystomenchants](https://github.com/DaPigGuy/PiggyCustomEnchants) by [@DaPigGuy](https://github.com/DaPigGuy)
+ - Ability to give custom enchanted items to players. Requires [PiggyCustomEnchants](https://github.com/DaPigGuy/PiggyCustomEnchants) by [@DaPigGuy](https://github.com/DaPigGuy)
  - Fool proof. Players cannot grief it.
  - You can set multiple crates using the pattern set in `crates.yml`.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
  - This plugin soft depends on **[VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments)** by [@TheAz928](https://github.com/TheAz928) or **[TeaSpoon](https://github.com/CortexPE/TeaSpoon)** by [@CortexPE](https://github.com/CortexPE) for adding enchants on the items.
- - Additionally you can also add **CustomEnchants** to the items. For this you require **[PiggyCystomenchants](https://github.com/DaPigGuy/PiggyCustomEnchants)** by [@DaPigGuy](https://github.com/DaPigGuy).
+ - Additionally you can also add **CustomEnchants** to the items. For this you require **[PiggyCustomEnchants](https://github.com/DaPigGuy/PiggyCustomEnchants)** by [@DaPigGuy](https://github.com/DaPigGuy).
  - Get the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) and drop the into your `plugins` folder.
  - Next navigate to the `crates.yml` file and edit/set the block you want the crate to be recognized with under `block: "ID:META"` key.
  - **Make sure that name of the world where crate is located is same as the world folder name.**
@@ -31,7 +31,9 @@
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
 |Crate Key|`/key [playerName] [amount]`|`mc.command.key`|`op`|
-|Use|`nil`|`mc.crates.use`|`true`|
+|Use a crate|`~`|`mc.crates.use`|`true`|
+|Destroy a crate|`~`|`mc.crates.destroy`|`op`|
+|Create a crate|`~`|`mc.crates.create`|`op`|
 ### TODO's
  - [ ] Add basic particles.
  - [ ] Add floating text above the crate(s).
