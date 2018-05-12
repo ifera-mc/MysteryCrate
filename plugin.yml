@@ -1,9 +1,10 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
-api: [3.0.0-ALPHA11, 3.0.0-ALPHA12]
-version: 4.0.0
+api: [3.0.0-ALPHA12]
+version: 5.0.0
 authors: [JackMD]
 load: POSTWORLD
+softdepend: [PiggyCustomEnchants, TeaSpoon, VanillaEnchantments]
 description: This plugins adds MysteryCrates with op items.
 website: https://github.com/JackMD/MysteryCrate
 
@@ -11,6 +12,12 @@ permissions:
  mc.command.key:
   default: op
   description: "Allows use of /key command"
- mc.command.xyz:
+ mc.crates.use:
+  default: true
+  description: "Allows using the crates."
+ mc.crates.create:
   default: op
-  descrption: "Allows use of /xyz command"
+  description: "Allows using the crates."
+ mc.crates.destroy:
+  default: op
+  description: "Allows using the crates."
