@@ -8,38 +8,40 @@
 ### Features
  - This plugin adds custom **crates** to your server.
  - Crates can be opened with a custom **key**.
- - It automatically spawns a custom **floating text** above the crate.
- - Easy to use `items.yml` for adding custom items to the crate.
- - Along with FloatingText a constant show of **Particles** is performed above the crate.
- - Upon **opening** the crate **another** set of **Particles** is generated telling player someone opened the crate.
- - Crate name can be set directly through `config.yml`.
+ - Easy to use `crates.yml` for adding custom items to the crate.
+ - Upon **opening** the crate **particles** are generated telling player someone opened the crate.
  - Ability to give enchanted item to players.
+ - Ability to give custom enchanted items to players. Requires [PiggyCystomenchants](https://github.com/DaPigGuy/PiggyCustomEnchants) by [@DaPigGuy](https://github.com/DaPigGuy)
  - Fool proof. Players cannot grief it.
+ - You can set multiple crates using the pattern set in `crates.yml`.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
- - This plugin depends on **[VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments)** by [@TheAz928](https://github.com/TheAz928) for adding enchants on the items. **Remember this plugin won't load without it.** So make sure to have it.
+ - This plugin soft depends on **[VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments)** by [@TheAz928](https://github.com/TheAz928) or **[TeaSpoon](https://github.com/CortexPE/TeaSpoon)** by [@CortexPE](https://github.com/CortexPE) for adding enchants on the items.
+ - Additionally you can also add **CustomEnchants** to the items. For this you require **[PiggyCystomenchants](https://github.com/DaPigGuy/PiggyCustomEnchants)** by [@DaPigGuy](https://github.com/DaPigGuy).
  - Get the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) and drop the into your `plugins` folder.
- - Next navigate to the `config.yml` file and mention the `XYZ` coordinates of the chest.
- - For this purpose use `/xyz` command in-game and then tap the **chest** `(ID : 54)` you want to set as a crate to get its coordinates.
- - Enter those X, Y and Z coordinates in `config.yml` under `X`, `Y` and `Z` headings.
+ - Next navigate to the `crates.yml` file and edit/set the block you want the crate to be recognized with under `block: "ID:META"` key.
  - **Make sure that name of the world where crate is located is same as the world folder name.**
  - Now mention the `name` of the`world` where the crate is located in `crateWorld`.
- - Reload the server and you are good to go.
- - To get the crate key use `/key [player] [amount]` in-game and then tap the crate with it.
- - To access the `xyz` locator do `/xyz` in-game.
+ - Reload the server.
+ - Place the block down you initially set in `crates.yml` under `block: "ID:META"` key.
+ - Place a chest `ID: 54` on top of that block.
+ - To open the crate you require a `crateKey`.
+ - To get the key use `/key [type] [player] [amount]` in-game and then tap the crate with it. You can set/see the crate type in `crates.yml` file.
 ### Commands and Permissions
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
 |Crate Key|`/key [playerName] [amount]`|`mc.command.key`|`op`|
-|Coordinates Locator|`/xyz`|`mc.command.xyz`|`op`|
+|Use|`nil`|`mc.crates.use`|`true`|
 ### TODO's
- - [x] Add basic particles.
+ - [ ] Add basic particles.
+ - [ ] Add floating text above the crate(s).
  - [x] Finish working on commands.
- - [x] Add custom `items.yml`to declare custom items to be given to players.
- - [ ] Add options for more particles.
- - [ ] Make setup a bit easier by making the plugin get coordinates itself.
+ - [x] Add custom `crates.yml`to declare custom items to be given to players.
+ - [X] Make setup a bit easier.
  - [X] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
- - [ ] **(*Low Priority*)** Add support for making more than one crate. 
+ - [X] Add support for making more than one crate.
+ - [X] Add support for normal enchants.
+ - [X] Add support for custom enchants.
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
   - Support is appreciated.
