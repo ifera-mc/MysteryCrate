@@ -1,0 +1,105 @@
+---
+crates:
+# HUGE THANKS TO @DaPigGuy and his PiggyCrates plugin for making this possible.
+#
+# Disclaimer: Some part of this code has been taken from @DaPigGuy's plugin,
+# I have asked his permission to use his code as a reference before hand as to avoid
+# unnecessary complains and/or contradictions.
+#
+# Example on how to set the config.
+#--------------------------------------------------------------------------------------------------------------------------
+# example:               | Set the name of the crate.
+#  drops:                | List the items that can be received from the crate.
+#   - name: "G-Helmet"   | Custom name for the item.
+#     id: 1              | ID of the reward.
+#     meta: 0            | Meta or Damage value of the Item.
+#     amount: 1          | The amount of Item that player receives.
+#     enchantments:      | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported.
+#       protection:      | Name of enchant you wish to apply.
+#         level: 3       | The level for enchant.
+#       unbreaking:      | You can set multiple enchants as long as they are registered.
+#         level: 2       | NOTE: If you donot want enchants simply remove the enchantments heading.
+#  block: "911:0"        | Set the block ID you want the crate to repersent. Placing a chest on it will activate the crate.
+# -------------------------------------------------------------------------------------------------------------------------
+  common:
+    drops:
+      - name: "Oak Wood"
+        id: 17
+        meta: 0
+        amount: 16
+      - name: "Stone"
+        id: 1
+        meta: 0
+        amount: 16
+      - name: "Cooked Beef"
+        id: 364
+        meta: 0
+        amount: 5
+    amount: 1
+    block: "173:0"
+  uncommon:
+    drops:
+      - name: "Coal"
+        id: 263
+        meta: 0
+        amount: 10
+      - name: "Torch"
+        id: 50
+        meta: 0
+        amount: 16
+      - name: "Cooked Chicken"
+        id: 366
+        meta: 0
+        amount: 16
+    amount: 1
+    block: "42:0"
+  vote:
+    drops:
+      - name: "Iron Ingot"
+        id: 265
+        meta: 0
+        amount: 10
+      - name: "Gold Ingot"
+        id: 266
+        meta: 0
+        amount: 10
+      - name: "Oak Wood"
+        id: 17
+        meta: 0
+        amount: 64
+    amount: 1
+    block: "41:0"
+  mythic:
+    drops:
+      - name: "Diamond"
+        id: 264
+        meta: 0
+        amount: 16
+      - name: "Emerald"
+        id: 388
+        meta: 0
+        amount: 16
+      - name: "Golden Apple"
+        id: 322
+        meta: 0
+        amount: 16
+    amount: 1
+    block: "57:0"
+  legendary:
+    drops:
+      - name: "Obsidian"
+        id: 49
+        meta: 0
+        amount: 32
+      - name: "Enchanted Apple"
+        id: 466
+        meta: 0
+        amount: 16
+      - name: "Bedrock"
+        id: 7
+        meta: 0
+        amount: 5
+    amount: 1
+    block: "133:0"
+
+...
