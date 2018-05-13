@@ -11,6 +11,7 @@
  *         |___/                  |___/  By @JackMD for PMMP
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+ *
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
  *
@@ -23,6 +24,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
+ * 
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -42,8 +44,8 @@ use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
+use pocketmine\Server;
 use pocketmine\tile\Chest as ChestTile;
-use pocketmine\tile\Tile;
 use pocketmine\utils\TextFormat;
 
 class EventListener implements Listener
@@ -68,16 +70,16 @@ class EventListener implements Listener
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		if (!$player->isOp()) {
-			if ($this->plugin->isCrateBlock($block->getId(), $block->getDamage())) {
-				if ($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST) {
+			if ($this->plugin->isCrateBlock($block->getId() , $block->getDamage())) {
+				if ($block->getLevel()->getBlock($block->add(0 , 1))->getId() == Block::CHEST) {
 					if (!$player->hasPermission("mc.crates.destroy")) {
 						$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
 						$event->setCancelled();
 					}
 				}
 			} elseif ($block->getId() == Block::CHEST) {
-				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-				if ($this->plugin->isCrateBlock($b->getId(), $b->getDamage())) {
+				$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+				if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
 					if (!$player->hasPermission("mc.crates.destroy")) {
 						$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
 						$event->setCancelled();
@@ -95,16 +97,16 @@ class EventListener implements Listener
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		if (!$player->isOp()) {
-			if ($this->plugin->isCrateBlock($block->getId(), $block->getDamage())) {
-				if ($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST) {
+			if ($this->plugin->isCrateBlock($block->getId() , $block->getDamage())) {
+				if ($block->getLevel()->getBlock($block->add(0 , 1))->getId() == Block::CHEST) {
 					if (!$player->hasPermission("mc.crates.create")) {
 						$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
 						$event->setCancelled();
 					}
 				}
 			} elseif ($block->getId() == Block::CHEST) {
-				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-				if ($this->plugin->isCrateBlock($b->getId(), $b->getDamage())) {
+				$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+				if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
 					if (!$player->hasPermission("mc.crates.create")) {
 						$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
 						$event->setCancelled();
@@ -119,16 +121,16 @@ class EventListener implements Listener
 	 */
 	public function onInteract(PlayerInteractEvent $event)
 	{
+		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$lev = Server::getInstance()->getLevelByName($levelName);
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
-		$this->plugin->task->block = $block;
 		$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
-		$level = $block->getLevel()->getFolderName();
 		$item = $event->getItem();
 
-		if ($block->getId() == Block::CHEST && ($type = $this->plugin->isCrateBlock($b->getId() , $b->getDamage())) !== false) {
-			if ($level === $this->plugin->getConfig()->get("crateWorld")) {
-
+		if ($player->getLevel() === $lev) {
+			if ($block->getId() == Block::CHEST && ($type = $this->plugin->isCrateBlock($b->getId() , $b->getDamage())) !== false) {
+				$this->plugin->task->block = $block;
 				if (!$player->hasPermission("mc.crates.use")) {
 					$event->setCancelled();
 					$player->sendMessage(TextFormat::RED . "You do not have permission to use a crate.");
@@ -141,7 +143,6 @@ class EventListener implements Listener
 						$event->setCancelled(false);
 						if ($this->plugin->isNotInUse()) {
 							$this->plugin->setNotInUse(false);
-							global $chest;
 							$chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX() , $event->getBlock()->getY() , $event->getBlock()->getZ()));;
 
 							if ($chest instanceof ChestTile) {
@@ -174,6 +175,7 @@ class EventListener implements Listener
 						}
 					}
 				}
+
 			}
 		}
 	}
@@ -183,30 +185,23 @@ class EventListener implements Listener
 	 */
 	public function onTransaction(InventoryTransactionEvent $event)
 	{
-		global $chest;
-		/** @var Tile|ChestTile $tile */
-		$tile = $chest;
-		$x = $tile->getX();
-		$y = $tile->getY();
-		$z = $tile->getZ();
-
-		$pos = new Vector3($x , $y , $z);
-
-		$tileChest = $event->getTransaction()->getSource()->getPlayer()->getLevel()->getTile($pos);
-
-		if ($tileChest === $tile) {
-			if ($tile->getLevel()->getName() === $this->plugin->getConfig()->get("crateWorld")) {
-				if ($tileChest->getY() === $tile->getY()) {
-					if ($tileChest instanceof ChestTile) {
-						foreach ($event->getTransaction()->getActions() as $action) {
-							if ($action instanceof SlotChangeAction) {
-								$inventory = $action->getInventory();
-								if ($inventory instanceof ChestInventory) {
-									if ($this->plugin->task !== null && $this->plugin->task->isCanTakeItem()) {
-										$event->setCancelled(true);
-									} else {
-										$event->setCancelled(true);
-									}
+		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$lev = Server::getInstance()->getLevelByName($levelName);
+		$player = $event->getTransaction()->getSource();
+		if ($player->getLevel() === $lev) {
+			foreach ($event->getTransaction()->getActions() as $action) {
+				if ($action instanceof SlotChangeAction) {
+					$cInv = $action->getInventory();
+					if ($cInv instanceof ChestInventory) {
+						$pos = $cInv->getHolder();
+						$block = $lev->getBlock($pos);
+						if ($block->getId() == Block::CHEST) {
+							$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+							if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
+								if ($this->plugin->task !== null && $this->plugin->task->isCanTakeItem()) {
+									$event->setCancelled(true);
+								} else {
+									$event->setCancelled(true);
 								}
 							}
 						}
@@ -221,15 +216,21 @@ class EventListener implements Listener
 	 */
 	public function onInventoryClose(InventoryCloseEvent $event)
 	{
-		/** @var ChestTile $chest */
-		global $chest;
-		if ($event->getInventory() instanceof ChestInventory) {
-			$cpos = new Vector3($chest->getX() , $chest->getY() , $chest->getZ());
-			$chestTile = $event->getPlayer()->getLevel()->getTile($cpos);
-
-			if ($chestTile instanceof ChestTile) {
-				$this->plugin->setNotInUse(true);
-				$this->plugin->getServer()->getScheduler()->cancelTask($this->plugin->task->getTaskId());
+		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$lev = Server::getInstance()->getLevelByName($levelName);
+		$che = $event->getInventory();
+		$player = $event->getPlayer();
+		if ($player->getLevel() === $lev) {
+			if ($che instanceof ChestInventory) {
+				$pos = $che->getHolder();
+				$block = $lev->getBlock($pos);
+				if ($block->getId() == Block::CHEST) {
+					$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+					if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
+						$this->plugin->setNotInUse(true);
+						$this->plugin->getServer()->getScheduler()->cancelTask($this->plugin->task->getTaskId());
+					}
+				}
 			}
 		}
 	}
