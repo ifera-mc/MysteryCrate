@@ -11,6 +11,7 @@
  *         |___/                  |___/  By @JackMD for PMMP
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+ *
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
  *
@@ -40,7 +41,6 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -56,7 +56,7 @@ class Main extends PluginBase
 	public $crateBlocks;
 	private $key;
 
-	public function onEnable()
+	public function onEnable() : void
 	{
 		$this->task = new UpdaterEvent($this);
 
@@ -68,7 +68,7 @@ class Main extends PluginBase
 		$this->key = $this->getConfig()->getNested("key");
 		$this->getServer()->getCommandMap()->register("key" , new KeyCommand("key" , $this) , "key");
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this) , $this);
-		$this->getLogger()->info("Plugin Enabled. Developed by @JackMD");
+		$this->getLogger()->info("Plugin Enabled.");
 
 	}
 
@@ -177,7 +177,7 @@ class Main extends PluginBase
 		}
 		$key = Item::get(Item::PAPER);
 		$key->setCount($amount);
-		$key->setLore([$this->getConfig()->get("descOne"), $this->getConfig()->get("desTwo")]);
+		$key->setLore([$this->getConfig()->get("descOne") , $this->getConfig()->get("desTwo")]);
 		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255 , "" , Enchantment::RARITY_COMMON , Enchantment::SLOT_ALL , 1)));
 		$key->setCustomName(ucfirst($type . " Key"));
 		$key->setNamedTagEntry(new StringTag("KeyType" , $type));
