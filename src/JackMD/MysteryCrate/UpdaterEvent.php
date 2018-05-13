@@ -9,16 +9,18 @@
  * \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
  *          __/ |                  __/ |
  *         |___/                  |___/  By @JackMD for PMMP
+ * 
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+ * 
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
- *
+ * 
  * This software is distributed under "GNU General Public License v3.0".
  * This license allows you to use it and/or modify it but you are not at
  * all allowed to sell this plugin at any cost. If found doing so the
  * necessary action required would be taken.
- *
+ * 
  * MysteryCrate is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
@@ -58,6 +60,7 @@ class UpdaterEvent extends PluginTask
 	public $item;
 	public $player;
 	public $chest;
+
 	/** @var ChestBlock */
 	public $block;
 
@@ -72,9 +75,6 @@ class UpdaterEvent extends PluginTask
 		$this->plugin = $plugin;
 	}
 
-	/**
-	 * @param int $timer
-	 */
 	public function onRun(int $timer)
 	{
 		if ($this->chest instanceof ChestTile != null) {
@@ -105,31 +105,38 @@ class UpdaterEvent extends PluginTask
 
 					foreach ($drops as $drop) {
 						$values = $this->plugin->getCrateDrops($type)[$drop];;
-						$i = Item::get(($values["id"]), $values["meta"], $values["amount"]);
+						$i = Item::get(($values["id"]) , $values["meta"] , $values["amount"]);
+						$i->setCustomName($values["name"]);
 						if (isset($values["enchantments"])) {
+							$ench = null;
 							foreach ($values["enchantments"] as $enchantment => $enchantmentinfo) {
 								$level = $enchantmentinfo["level"];
-								if (!is_null($ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants")) && !is_null($enchant = CustomEnchants::getEnchantmentByName($enchantment))) {
-									/** @var CE $ce */
-									$i = $ce->addEnchantment($i , $enchantment , $level);
-								} else {
-									if (!is_null($enchant = Enchantment::getEnchantmentByName($enchantment))) {
-										$i->addEnchantment(new EnchantmentInstance($enchant , $level));
+								$ench = Enchantment::getEnchantmentByName($enchantment);
+								if ($ench === null) {
+									$ench = CustomEnchants::getEnchantmentByName($enchantment);
+								}
+								if ($ench !== null) {
+									$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
+									if ($ce instanceof CE) {
+										if (!is_null($ce) && $ench instanceof CustomEnchants) {
+											$i = $ce->addEnchantment($i , $ench->getName() , $level);
+										} else {
+											$i->addEnchantment(new EnchantmentInstance($ench , $level));
+										}
 									}
 								}
 							}
 						}
-						$i->setCustomName($values["name"]);
 
 						$cInv = $this->chest->getInventory();
 
-						$this->setItem(10 , $this->chest->getInventory()->getItem(11) , $cInv->getItem(11)->getCount(), $cInv->getItem(11)->getDamage());
-						$this->setItem(11 , $this->chest->getInventory()->getItem(12) , $cInv->getItem(12)->getCount(), $cInv->getItem(12)->getDamage());
-						$this->setItem(12 , $this->chest->getInventory()->getItem(13) , $cInv->getItem(13)->getCount(), $cInv->getItem(13)->getDamage());
-						$this->setItem(13 , $this->chest->getInventory()->getItem(14) , $cInv->getItem(14)->getCount(), $cInv->getItem(14)->getDamage());//reward
-						$this->setItem(14 , $this->chest->getInventory()->getItem(15) , $cInv->getItem(15)->getCount(), $cInv->getItem(15)->getDamage());
-						$this->setItem(15 , $this->chest->getInventory()->getItem(16) , $cInv->getItem(16)->getCount(), $cInv->getItem(16)->getDamage());
-						$this->setItem(16 , $i , $i->getCount(), $i->getDamage());
+						$this->setItem(10 , $this->chest->getInventory()->getItem(11) , $cInv->getItem(11)->getCount() , $cInv->getItem(11)->getDamage());
+						$this->setItem(11 , $this->chest->getInventory()->getItem(12) , $cInv->getItem(12)->getCount() , $cInv->getItem(12)->getDamage());
+						$this->setItem(12 , $this->chest->getInventory()->getItem(13) , $cInv->getItem(13)->getCount() , $cInv->getItem(13)->getDamage());
+						$this->setItem(13 , $this->chest->getInventory()->getItem(14) , $cInv->getItem(14)->getCount() , $cInv->getItem(14)->getDamage());//reward
+						$this->setItem(14 , $this->chest->getInventory()->getItem(15) , $cInv->getItem(15)->getCount() , $cInv->getItem(15)->getDamage());
+						$this->setItem(15 , $this->chest->getInventory()->getItem(16) , $cInv->getItem(16)->getCount() , $cInv->getItem(16)->getDamage());
+						$this->setItem(16 , $i , $i->getCount() , $i->getDamage());
 					}
 				}
 			}
@@ -189,7 +196,7 @@ class UpdaterEvent extends PluginTask
 	 * @param      $count
 	 * @param int  $dmg
 	 */
-	public function setItem($index , Item $item ,  $count , $dmg = 0)
+	public function setItem($index , Item $item , $count , $dmg = 0)
 	{
 		$item->setCount($count);
 		$item->setDamage($dmg);
