@@ -72,11 +72,6 @@ class Main extends PluginBase
 
 	}
 
-	public function onDisable()
-	{
-		$this->getLogger()->debug(TextFormat::RED . "MysteryCrate Disabled.");
-	}
-
 	public function initCrates()
 	{
 		$this->saveResource("crates.yml");
