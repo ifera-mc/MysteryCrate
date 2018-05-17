@@ -16,7 +16,7 @@
  - You can set multiple crates using the pattern set in `crates.yml`.
  - The entire plugin is suited for [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) latest API.
 ### How to setup?
- - This plugin soft depends on **[VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments)** by [@TheAz928](https://github.com/TheAz928) or **[TeaSpoon](https://github.com/CortexPE/TeaSpoon)** by [@CortexPE](https://github.com/CortexPE) for adding enchants on the items.
+ - For adding enchants that are not registered by PocketMine-MP you may use **[VanillaEnchantments](https://github.com/TheAz928/VanillaEnchantments)** by [@TheAz928](https://github.com/TheAz928) or **[TeaSpoon](https://github.com/CortexPE/TeaSpoon)** by [@CortexPE](https://github.com/CortexPE) for adding enchants on the items.
  - Additionally you can also add **CustomEnchants** to the items. For this you require **[PiggyCustomEnchants](https://github.com/DaPigGuy/PiggyCustomEnchants)** by [@DaPigGuy](https://github.com/DaPigGuy).
  - Get the [.phar](https://poggit.pmmp.io/ci/JackMD/MysteryCrate/MysteryCrate) and drop the into your `plugins` folder.
  - Next navigate to the `crates.yml` file and edit/set the block you want the crate to be recognized with under `block: "ID:META"` key.
