@@ -118,9 +118,6 @@ class EventListener implements Listener
 
 	/**
 	 * @param PlayerInteractEvent $event
-	 *
-	 * @priority HIGHEST
-	 * @ignoreCancelled false
 	 */
 	public function onInteract(PlayerInteractEvent $event)
 	{
