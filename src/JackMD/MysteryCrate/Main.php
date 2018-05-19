@@ -175,7 +175,8 @@ class Main extends PluginBase
 		if (is_null($this->getCrateDrops($type))) {
 			return false;
 		}
-		$key = Item::get(Item::PAPER);
+		$keyID = $this->getConfig()->get("key");
+		$key = Item::fromString($keyID);
 		$key->setCount($amount);
 		$key->setLore([$this->getConfig()->get("descOne") , $this->getConfig()->get("desTwo")]);
 		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255 , "" , Enchantment::RARITY_COMMON , Enchantment::SLOT_ALL , 1)));
