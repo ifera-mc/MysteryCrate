@@ -116,12 +116,12 @@ class EventListener implements Listener
 		}
 	}
 
-   	/**
-     	* @param PlayerInteractEvent $event
-     	*
-     	* @priority HIGHEST
-    	* @ignoreCancelled false
-    	*/
+	/**
+	 * @param PlayerInteractEvent $event
+	 *
+	 * @priority HIGHEST
+	 * @ignoreCancelled false
+	 */
 	public function onInteract(PlayerInteractEvent $event)
 	{
 		$levelName = $this->plugin->getConfig()->get("crateWorld");
