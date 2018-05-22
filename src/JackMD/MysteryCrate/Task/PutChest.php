@@ -9,8 +9,10 @@
  * \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
  *          __/ |                  __/ |
  *         |___/                  |___/  By @JackMD for PMMP
+ * 
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+ * 
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
  *
@@ -38,21 +40,24 @@ use pocketmine\scheduler\PluginTask;
 
 class PutChest extends PluginTask
 {
-    private $plugin, $cpos;
+    private $plugin, $cpos, $dmg;
     public $chest;
+
 
 	/**
 	 * PutChest constructor.
 	 *
 	 * @param Main    $plugin
 	 * @param Vector3 $cpos
+	 * @param int     $dmg
 	 */
-	public function __construct(Main $plugin, Vector3 $cpos)
+	public function __construct(Main $plugin, Vector3 $cpos, int $dmg)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
 		$this->cpos = $cpos;
-    }
+		$this->dmg = $dmg;
+	}
 
 	/**
 	 * @param int $tick
@@ -61,10 +66,10 @@ class PutChest extends PluginTask
     {
         $level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->cpos;
+		$dmg = $this->dmg;
 
-        $level->setBlock($cpos, Block::get(54));
+        $level->setBlock($cpos, Block::get(54, $dmg));
         
         $this->plugin->setNotInUse(true);
-
     }
 }
