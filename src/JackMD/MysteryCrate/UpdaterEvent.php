@@ -43,7 +43,6 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\level\sound\ClickSound;
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\tile\Chest as ChestTile;
@@ -107,22 +106,18 @@ class UpdaterEvent extends PluginTask
 						$values = $this->plugin->getCrateDrops($type)[$drop];;
 						$i = Item::get(($values["id"]) , $values["meta"] , $values["amount"]);
 						$i->setCustomName($values["name"]);
+
 						if (isset($values["enchantments"])) {
-							$ench = null;
 							foreach ($values["enchantments"] as $enchantment => $enchantmentinfo) {
 								$level = $enchantmentinfo["level"];
-								$ench = Enchantment::getEnchantmentByName($enchantment);
-								if ($ench === null) {
-									$ench = CustomEnchants::getEnchantmentByName($enchantment);
-								}
-								if ($ench !== null) {
-									$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
-									if ($ce instanceof CE) {
-										if (!is_null($ce) && $ench instanceof CustomEnchants) {
-											$i = $ce->addEnchantment($i , $ench->getName() , $level);
-										} else {
-											$i->addEnchantment(new EnchantmentInstance($ench , $level));
-										}
+								$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
+								if (!is_null($ce) && !is_null($enchant = CustomEnchants::getEnchantmentByName($enchantment))) {
+									if($ce instanceof CE) {
+										$i = $ce->addEnchantment($i , $enchantment , $level);
+									}
+								} else {
+									if (!is_null($enchant = Enchantment::getEnchantmentByName($enchantment))) {
+										$i->addEnchantment(new EnchantmentInstance($enchant, $level));
 									}
 								}
 							}
@@ -163,7 +158,9 @@ class UpdaterEvent extends PluginTask
 						$this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
 					}
 
-					$cpos = new Vector3($block->getX() , $block->getY() , $block->getZ());
+
+
+					$cpos = $block;
 					$this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin , $cpos) , 20);
 					$this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin , $cpos) , 24);
 
