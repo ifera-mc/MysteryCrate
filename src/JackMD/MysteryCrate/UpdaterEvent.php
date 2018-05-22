@@ -158,11 +158,11 @@ class UpdaterEvent extends PluginTask
 						$this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
 					}
 
-
-
 					$cpos = $block;
+					$dmg = $block->getDamage();
+
 					$this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin , $cpos) , 20);
-					$this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin , $cpos) , 24);
+					$this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin , $cpos , $dmg) , 24);
 
 					$this->plugin->getServer()->getScheduler()->cancelTask($this->getTaskId());
 				}
