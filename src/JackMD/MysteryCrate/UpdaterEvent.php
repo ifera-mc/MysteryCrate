@@ -125,12 +125,12 @@ class UpdaterEvent extends PluginTask
 
 						$cInv = $this->chest->getInventory();
 
-						$this->setItem(10 , $this->chest->getInventory()->getItem(11) , $cInv->getItem(11)->getCount() , $cInv->getItem(11)->getDamage());
-						$this->setItem(11 , $this->chest->getInventory()->getItem(12) , $cInv->getItem(12)->getCount() , $cInv->getItem(12)->getDamage());
-						$this->setItem(12 , $this->chest->getInventory()->getItem(13) , $cInv->getItem(13)->getCount() , $cInv->getItem(13)->getDamage());
-						$this->setItem(13 , $this->chest->getInventory()->getItem(14) , $cInv->getItem(14)->getCount() , $cInv->getItem(14)->getDamage());//reward
-						$this->setItem(14 , $this->chest->getInventory()->getItem(15) , $cInv->getItem(15)->getCount() , $cInv->getItem(15)->getDamage());
-						$this->setItem(15 , $this->chest->getInventory()->getItem(16) , $cInv->getItem(16)->getCount() , $cInv->getItem(16)->getDamage());
+						$this->setItem(10 , $cInv->getItem(11) , $cInv->getItem(11)->getCount() , $cInv->getItem(11)->getDamage());
+						$this->setItem(11 , $cInv->getItem(12) , $cInv->getItem(12)->getCount() , $cInv->getItem(12)->getDamage());
+						$this->setItem(12 , $cInv->getItem(13) , $cInv->getItem(13)->getCount() , $cInv->getItem(13)->getDamage());
+						$this->setItem(13 , $cInv->getItem(14) , $cInv->getItem(14)->getCount() , $cInv->getItem(14)->getDamage());//reward
+						$this->setItem(14 , $cInv->getItem(15) , $cInv->getItem(15)->getCount() , $cInv->getItem(15)->getDamage());
+						$this->setItem(15 , $cInv->getItem(16) , $cInv->getItem(16)->getCount() , $cInv->getItem(16)->getDamage());
 						$this->setItem(16 , $i , $i->getCount() , $i->getDamage());
 					}
 				}
