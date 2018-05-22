@@ -35,7 +35,6 @@ crates:
         id: 364
         meta: 0
         amount: 5
-    amount: 1
     block: "173:0"
   uncommon:
     drops:
@@ -51,7 +50,6 @@ crates:
         id: 366
         meta: 0
         amount: 16
-    amount: 1
     block: "42:0"
   vote:
     drops:
@@ -67,7 +65,6 @@ crates:
         id: 17
         meta: 0
         amount: 64
-    amount: 1
     block: "41:0"
   mythic:
     drops:
@@ -83,7 +80,6 @@ crates:
         id: 322
         meta: 0
         amount: 16
-    amount: 1
     block: "57:0"
   legendary:
     drops:
@@ -99,7 +95,5 @@ crates:
         id: 7
         meta: 0
         amount: 5
-    amount: 1
     block: "133:0"
-
 ...
