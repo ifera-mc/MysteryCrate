@@ -9,10 +9,10 @@
  * \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
  *          __/ |                  __/ |
  *         |___/                  |___/  By @JackMD for PMMP
- * 
+ *
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
- * 
+ *
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
  *
@@ -42,7 +42,6 @@ class PutChest extends PluginTask
 {
     private $plugin, $cpos, $dmg;
     public $chest;
-
 
 	/**
 	 * PutChest constructor.
