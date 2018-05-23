@@ -7,7 +7,7 @@ crates:
 # unnecessary complains and/or contradictions.
 #
 # Example on how to set the config.
-# Note: Please use tabs instead of spaces.
+# Note: For adding spaces use tabs.
 #--------------------------------------------------------------------------------------------------------------------------
 # example:               | Set the name of the crate.
 #  drops:                | List the items that can be received from the crate.
@@ -37,7 +37,6 @@ crates:
         id: 366
         meta: 0
         amount: 16
-    amount: 1
     block: "173:0"
   uncommon:
     drops:
@@ -53,7 +52,6 @@ crates:
         id: 366
         meta: 0
         amount: 16
-    amount: 1
     block: "42:0"
   vote:
     drops:
@@ -69,7 +67,6 @@ crates:
         id: 17
         meta: 0
         amount: 64
-    amount: 1
     block: "41:0"
   mythic:
     drops:
@@ -85,7 +82,6 @@ crates:
         id: 322
         meta: 0
         amount: 16
-    amount: 1
     block: "57:0"
   legendary:
     drops:
@@ -101,6 +97,5 @@ crates:
         id: 7
         meta: 0
         amount: 5
-    amount: 1
     block: "133:0"
 ...
