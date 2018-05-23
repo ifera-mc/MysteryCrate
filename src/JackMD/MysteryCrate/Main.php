@@ -178,7 +178,7 @@ class Main extends PluginBase
 		$keyID = $this->getConfig()->get("key");
 		$key = Item::fromString($keyID);
 		$key->setCount($amount);
-		$key->setLore([$this->getConfig()->get("descOne") , $this->getConfig()->get("desTwo")]);
+		$key->setLore([$this->getConfig()->get("descOne") , $this->getConfig()->get("descTwo")]);
 		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255 , "" , Enchantment::RARITY_COMMON , Enchantment::SLOT_ALL , Enchantment::SLOT_NONE , 1)));
 		$key->setCustomName(ucfirst($type . " Key"));
 		$key->setNamedTagEntry(new StringTag("KeyType" , $type));
