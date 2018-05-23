@@ -123,6 +123,10 @@ class UpdaterEvent extends PluginTask
 							}
 						}
 
+						if (isset($values["lore"])) {
+							$i->setLore([$values["lore"]]);
+						}
+
 						$cInv = $this->chest->getInventory();
 
 						$this->setItem(10 , $cInv->getItem(11) , $cInv->getItem(11)->getCount() , $cInv->getItem(11)->getDamage());
