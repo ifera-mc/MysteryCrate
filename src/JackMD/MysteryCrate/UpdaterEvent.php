@@ -39,26 +39,24 @@ use JackMD\MysteryCrate\Task\RemoveChest;
 use PiggyCustomEnchants\CustomEnchants\CustomEnchants;
 use PiggyCustomEnchants\Main as CE;
 use pocketmine\block\Chest as ChestBlock;
+use pocketmine\command\ConsoleCommandSender;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\level\sound\ClickSound;
 use pocketmine\Player;
 use pocketmine\scheduler\PluginTask;
+use pocketmine\Server;
 use pocketmine\tile\Chest as ChestTile;
 use pocketmine\utils\TextFormat;
 
 class UpdaterEvent extends PluginTask
 {
+	private $cmd;
+
 	public $canTakeItem = false;
 	public $t_delay = 2 * 20;
-	public $scheduler;
-	public $main;
-	public $level;
-	public $plugin;
-	public $item;
-	public $player;
-	public $chest;
+	public $scheduler, $main, $level, $plugin, $item, $player, $chest;
 
 	/** @var ChestBlock */
 	public $block;
@@ -127,6 +125,13 @@ class UpdaterEvent extends PluginTask
 							$i->setLore([$values["lore"]]);
 						}
 
+						$player = $this->player;
+						if (isset($values["command"])) {
+							$cmd = $values["command"];
+							$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
+							$this->cmd = $cmd;
+						}
+
 						$cInv = $this->chest->getInventory();
 
 						$this->setItem(10 , $cInv->getItem(11) , $cInv->getItem(11)->getCount() , $cInv->getItem(11)->getDamage());
@@ -158,7 +163,11 @@ class UpdaterEvent extends PluginTask
 					$type = $this->plugin->isCrateBlock($b->getId() , $b->getDamage());
 
 					if ($this->player instanceof Player) {
-						$this->player->getInventory()->addItem($slot13);
+						if ($slot13->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
+							Server::getInstance()->dispatchCommand(new ConsoleCommandSender(), $this->cmd);
+						}else{
+							$this->player->getInventory()->addItem($slot13);
+						}
 						$this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
 					}
 

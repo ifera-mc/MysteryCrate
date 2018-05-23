@@ -37,13 +37,16 @@
 ### TODO's
  - [ ] Add basic particles.
  - [ ] Add floating text above the crate(s).
- - [x] Finish working on commands.
- - [x] Add custom `crates.yml`to declare custom items to be given to players.
+ - [X] Add ability to execute commands as a reward.
+ - [X] Add custom lore to the rewards.
+ - [X] Finish working on commands.
+ - [X] Add custom `crates.yml`to declare custom items to be given to players.
  - [X] Make setup a bit easier.
  - [X] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
  - [X] Add support for making more than one crate.
  - [X] Add support for normal enchants.
  - [X] Add support for custom enchants.
+ - [X] Find more in [#34](https://github.com/JackMD/MysteryCrate/issues/34).
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
   - Support is appreciated.
