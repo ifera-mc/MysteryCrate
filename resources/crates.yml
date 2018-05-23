@@ -7,7 +7,7 @@ crates:
 # unnecessary complains and/or contradictions.
 #
 # Example on how to set the config.
-# Note: For adding spaces use tabs.
+# Note: Please use tabs instead of spaces.
 #--------------------------------------------------------------------------------------------------------------------------
 # example:               | Set the name of the crate.
 #  drops:                | List the items that can be received from the crate.
