@@ -45,3 +45,9 @@ crateWorld: "Master"
 # If you want to reward the player with a command, set the meta of the reward in the crates.yml
 # to the value you set in commandMeta.
 commandMeta: 50
+
+# Set for how long you want the task to run. Increasing this value will increase the
+# time taken for the player to earn the reward and vice versa.
+# Recommended to set it to 2.
+# Enter the value in seconds.
+tickDelay: 2
