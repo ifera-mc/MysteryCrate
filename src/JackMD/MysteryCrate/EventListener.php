@@ -152,7 +152,7 @@ class EventListener implements Listener
 								$chest->getInventory()->clearAll();
 								$this->plugin->task->chest = $chest;
 								$this->plugin->task->player = $player;
-								$this->plugin->task->t_delay = 2 * 20;
+								$this->plugin->task->setTDelay($this->plugin->getConfig()->get("tickDelay") * 20);
 								$item = $player->getInventory()->getItemInHand();
 								$item->setCount($item->getCount() - 1);
 								$item->setDamage($item->getDamage());
