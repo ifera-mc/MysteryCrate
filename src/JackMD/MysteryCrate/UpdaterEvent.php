@@ -74,9 +74,10 @@ class UpdaterEvent extends PluginTask
 
 	public function onRun(int $timer)
 	{
+		$t_delay = $this->getTDelay();
 		if ($this->chest instanceof ChestTile != null) {
-			$this->t_delay--;
-			if ($this->t_delay >= 0) {
+			$this->setTDelay(--$t_delay);
+			if ($t_delay >= 0) {
 				if ($this->chest instanceof ChestTile) {
 
 					$i = 0;
@@ -145,7 +146,7 @@ class UpdaterEvent extends PluginTask
 				}
 			}
 
-			if ($this->t_delay == -1) {
+			if ($t_delay == -1) {
 				if ($this->chest instanceof ChestTile) {
 
 					$this->setItemINT(10 , 0 , 0);
@@ -230,5 +231,21 @@ class UpdaterEvent extends PluginTask
 	public function setCanTakeItem(bool $canTakeItem)
 	{
 		$this->canTakeItem = $canTakeItem;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTDelay() : int
+	{
+		return $this->t_delay;
+	}
+
+	/**
+	 * @param int $t_delay
+	 */
+	public function setTDelay(int $t_delay)
+	{
+		$this->t_delay = $t_delay;
 	}
 }
