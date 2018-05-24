@@ -70,7 +70,7 @@ class KeyCommand extends PluginCommand
         if ($plugin instanceof Main) {
             if (!isset($args[0])) {
                 $sender->sendMessage("Usage: /key [type] [player] [amount]");
-                return false;
+                return true;
             }
             $target = $sender;
             $args[0] = strtolower($args[0]);
@@ -78,17 +78,17 @@ class KeyCommand extends PluginCommand
                 $target = $plugin->getServer()->getPlayer($args[1]);
                 if (!$target instanceof Player) {
                     $sender->sendMessage(TextFormat::RED . "Invalid player.");
-                    return false;
+                    return true;
                 }
             } else {
                 if (!$target instanceof Player) {
                     $sender->sendMessage(TextFormat::RED . "Please specify a player.");
-                    return false;
+                    return true;
                 }
             }
             if (!$plugin->getCrateType($args[0])) {
                 $sender->sendMessage(TextFormat::RED . "Invalid crate type.");
-                return false;
+                return true;
             }
 			if (isset($args[2]) and is_numeric($args[2])) {
 				$amount = (int)$args[2];
@@ -99,6 +99,6 @@ class KeyCommand extends PluginCommand
             $sender->sendMessage(TextFormat::GREEN . ucfirst($args[0]) . " key has been given.");
             return true;
         }
-        return false;
+        return true;
     }
 }
