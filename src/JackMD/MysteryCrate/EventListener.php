@@ -11,20 +11,16 @@
  *         |___/                  |___/  By @JackMD for PMMP
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
- *
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
- *
  * This software is distributed under "GNU General Public License v3.0".
  * This license allows you to use it and/or modify it but you are not at
  * all allowed to sell this plugin at any cost. If found doing so the
  * necessary action required would be taken.
- *
  * MysteryCrate is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- * 
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -36,12 +32,15 @@ namespace JackMD\MysteryCrate;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
@@ -69,6 +68,7 @@ class EventListener implements Listener
 	{
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
+
 		if (!$player->isOp()) {
 			if ($this->plugin->isCrateBlock($block->getId() , $block->getDamage())) {
 				if ($block->getLevel()->getBlock($block->add(0 , 1))->getId() == Block::CHEST) {
@@ -84,6 +84,21 @@ class EventListener implements Listener
 						$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
 						$event->setCancelled();
 					}
+				}
+			}
+		}
+
+		if ($block->getId() == Block::CHEST) {
+			$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+			if ($type = $this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
+				$cfg = $this->plugin->blocks;
+				if (!empty($cfg->get($type))) {
+					$cfg->remove($type);
+					$cfg->remove("$type.x");
+					$cfg->remove("$type.y");
+					$cfg->remove("$type.z");
+					$cfg->save();
+					$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully destroyed. Reload the server to remove floating text.");
 				}
 			}
 		}
@@ -96,6 +111,7 @@ class EventListener implements Listener
 	{
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
+
 		if (!$player->isOp()) {
 			if ($this->plugin->isCrateBlock($block->getId() , $block->getDamage())) {
 				if ($block->getLevel()->getBlock($block->add(0 , 1))->getId() == Block::CHEST) {
@@ -114,12 +130,29 @@ class EventListener implements Listener
 				}
 			}
 		}
+
+		if ($block->getId() == Block::CHEST) {
+			$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
+			if ($type = $this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
+				$x = $block->getX();
+				$y = $block->getY();
+				$z = $block->getZ();
+				$cfg = $this->plugin->blocks;
+				if (empty($cfg->get($type))) {
+					$cfg->set($type , TextFormat::GOLD . ucfirst($type) . " " . TextFormat::GREEN . "Crate");
+					$cfg->set("$type.x" , $x);
+					$cfg->set("$type.y" , $y);
+					$cfg->set("$type.z" , $z);
+					$cfg->save();
+					$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully placed. Reload the server to add floating text.");
+				}
+			}
+		}
 	}
 
 	/**
 	 * @param PlayerInteractEvent $event
-	 *
-	 * @priority HIGHEST
+	 * @priority        HIGHEST
 	 * @ignoreCancelled false
 	 */
 	public function onInteract(PlayerInteractEvent $event)
@@ -178,7 +211,6 @@ class EventListener implements Listener
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -232,6 +264,48 @@ class EventListener implements Listener
 					if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
 						$this->plugin->setNotInUse(true);
 						$this->plugin->getServer()->getScheduler()->cancelTask($this->plugin->task->getTaskId());
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param PlayerJoinEvent $event
+	 */
+	public function PlayerJoinEvent(PlayerJoinEvent $event)
+	{
+		$lev = $event->getPlayer()->getLevel();
+		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
+		if (!empty($this->plugin->textParticles)) {
+			$particles = array_values($this->plugin->textParticles);
+			if ($lev->getFolderName() == $crateLevel) {
+				foreach ($particles as $particle) {
+					$lev->addParticle($particle , [$event->getPlayer()]);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param EntityLevelChangeEvent $event
+	 */
+	public function onLevelChange(EntityLevelChangeEvent $event)
+	{
+		$targetLevel = $event->getTarget();
+		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
+		if (!empty($this->plugin->textParticles)) {
+			$particles = array_values($this->plugin->textParticles);
+			foreach ($particles as $particle) {
+				if ($particle instanceof FloatingTextParticle) {
+					if ($targetLevel->getFolderName() == $crateLevel) {
+						$particle->setInvisible(false);
+						$lev = $event->getTarget();
+						$lev->addParticle($particle , [$event->getEntity()]);
+					} else {
+						$particle->setInvisible(true);
+						$lev = $event->getOrigin();
+						$lev->addParticle($particle , [$event->getEntity()]);
 					}
 				}
 			}
