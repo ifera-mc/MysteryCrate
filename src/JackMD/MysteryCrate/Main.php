@@ -9,6 +9,7 @@
  * \_|  |_/\__, |___/\__\___|_|   \__, |\____/_|  \__,_|\__\___|
  *          __/ |                  __/ |
  *         |___/                  |___/  By @JackMD for PMMP
+ *
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
  *
@@ -34,13 +35,17 @@
 namespace JackMD\MysteryCrate;
 
 use JackMD\MysteryCrate\Commands\KeyCommand;
+use JackMD\MysteryCrate\Particles\CloudRain;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
+use pocketmine\level\particle\FloatingTextParticle;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -49,12 +54,12 @@ use pocketmine\utils\Config;
  */
 class Main extends PluginBase
 {
-	public $task;
 	public $notInUse = true;
-	public $crates;
-	public $crateDrops;
-	public $crateBlocks;
+	public $task, $crates, $crateDrops, $crateBlocks, $textParticles;
 	private $key;
+
+	/** @var Config */
+	public $blocks;
 
 	public function onEnable() : void
 	{
@@ -63,8 +68,19 @@ class Main extends PluginBase
 		if (!is_dir($this->getDataFolder())) {
 			mkdir($this->getDataFolder());
 		}
-		$this->initCrates();
+
 		$this->saveDefaultConfig();
+		$this->initCrates();
+		$this->initTextParticle();
+
+		if ($this->getConfig()->get("showParticle") !== false) {
+			if ($this->getServer()->getLevelByName($this->getConfig()->get("crateWorld")) !== null) {
+				$this->initParticleShow();
+			} else {
+				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
+			}
+		}
+
 		$this->key = $this->getConfig()->getNested("key");
 		$this->getServer()->getCommandMap()->register("key" , new KeyCommand("key" , $this) , "key");
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this) , $this);
@@ -80,6 +96,40 @@ class Main extends PluginBase
 			$this->crates[$type] = $values;
 			$this->crateDrops[$type] = $values["drops"];
 			$this->crateBlocks[$values["block"]] = $type;
+		}
+		$this->saveResource("blocks.yml");
+		$this->blocks = new Config($this->getDataFolder() . "blocks.yml");
+	}
+
+	public function initTextParticle()
+	{
+		$positions = $this->blocks;
+		$types = $this->getCrateTypes();
+		foreach ($types as $type) {
+			$text = $positions->get($type);
+			$x = $positions->get("$type.x");
+			$y = $positions->get("$type.y");
+			$z = $positions->get("$type.z");
+			if (!empty($x)) {
+				$pos = new Vector3($x + 0.5 , $y + 1 , $z + 0.5);
+				$this->textParticles[$type] = new FloatingTextParticle($pos , '' , $text . TextFormat::RESET);
+			}
+		}
+	}
+
+	public function initParticleShow()
+	{
+		$positions = $this->blocks;
+		$types = $this->getCrateTypes();
+		foreach ($types as $type) {
+			$x = $positions->get("$type.x");
+			$y = $positions->get("$type.y");
+			$z = $positions->get("$type.z");
+			if (!empty($x)) {
+				$pos = new Vector3($x + 0.5 , $y , $z + 0.5);
+				$taskCloud = new CloudRain($this, $pos);
+				$this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
+			}
 		}
 	}
 
@@ -173,6 +223,7 @@ class Main extends PluginBase
 	public function giveKey(Player $player , string $type , int $amount)
 	{
 		if (is_null($this->getCrateDrops($type))) {
+
 			return false;
 		}
 		$keyID = $this->getConfig()->get("key");
