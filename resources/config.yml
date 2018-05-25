@@ -51,3 +51,7 @@ commandMeta: 50
 # Recommended to set it to 2.
 # Enter the value in seconds.
 tickDelay: 2
+
+# If your server suffers from bad lag then set this to false.
+# Setting this to false will remove the particles above the crate.
+showParticle: true
