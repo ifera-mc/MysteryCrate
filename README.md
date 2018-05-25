@@ -35,8 +35,8 @@
 |Destroy a crate|`~`|`mc.crates.destroy`|`op`|
 |Create a crate|`~`|`mc.crates.create`|`op`|
 ### TODO's
- - [ ] Add basic particles.
- - [ ] Add floating text above the crate(s).
+ - [X] Add basic particles.
+ - [X] Add floating text above the crate(s).
  - [X] Add ability to execute commands as a reward.
  - [X] Add custom lore to the rewards.
  - [X] Finish working on commands.
