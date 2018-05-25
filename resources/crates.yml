@@ -1,6 +1,6 @@
 ---
 crates:
-# HUGE THANKS TO @DaPigGuy and his PiggyCrates plugin for making this possible.
+# HUGE THANKS TO @DaPigGuy and his PiggyCrates plugin for making multiple crates possible.
 #
 # Disclaimer: Some part of this code has been taken from @DaPigGuy's plugin,
 # I have asked his permission to use his code as a reference before hand as to avoid
@@ -10,7 +10,7 @@ crates:
 # commandMeta set in config.yml or else the command won't work.
 #
 # Example on how to set the config.
-# Note: For adding spaces use tabs.
+# Note: Please use tabs instead of spaces.
 #-------------------------------------------------------------------------------------------------------------------------------
 # example:               | Set the name of the crate.
 #  drops:                | List the items that can be received from the crate.
