@@ -43,7 +43,7 @@ A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) an
 **Q: I would like a new feature to be added. How do I report?**<br />
 A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.<br /><br />
 **Q: What to do with the `blocks.yml` file?**<br />
-A: You need not to do anything with it unless you want to edit the floatiing text. The plugin automatically generates stuff within the file to make the setup for the user easier.<br /><br />
+A: You need not to do anything with it unless you want to edit the floatiing text. The plugin automatically generates stuff within the file to make the setup for the user easier.
 ### Commands and Permissions
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
