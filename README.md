@@ -28,20 +28,20 @@
  - To open the crate you require a `crateKey`.
  - To get the key use `/key [type] [player] [amount]` in-game and then tap the crate with it. You can set/see the crate type in `crates.yml` file.
 ### FAQs
-**Q:** How to setup the crates?
-A: Please read [this](https://github.com/JackMD/MysteryCrate#how-to-setup).
-**Q:** How to add particles?
-A: Its very simple. When you place a chest on top of the block you set in `crates.yml` the plugin will automatically add its coordinates to the `blocks.yml` file. You will just need to restart the server for the particles to show.
-**Q:** How to remove the particles?
-A: Just destroy the chest whose particles you want to remove. Restart the server and the particles will be removed.
-**Q:** Will the crates have floating text above them?
-A: Yes, they will have Floating Text. 
-**Q:** Can I edit the floating text that appears above the crate?
-A: Yes you can. Navigate to `blocks.yml` and edit the crate text you see. For example, you want to edit the floating text of legendary crate then there would be a key\heading of `legendary:` in the `blocks.yml` file. Edit the text after the `:` to edit\change the floating text.
-**Q:** I found a issue in the plugin what do I do?
-A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) and give as much detail as possible.
-**Q:** I would like a new feature to be added. How do I report?
-A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.
+**Q:** How to setup the crates?<br />
+A: Please read [this](https://github.com/JackMD/MysteryCrate#how-to-setup).<br />
+**Q:** How to add particles?<br />
+A: Its very simple. When you place a chest on top of the block you set in `crates.yml` the plugin will automatically add its coordinates to the `blocks.yml` file. You will just need to restart the server for the particles to show.<br />
+**Q:** How to remove the particles?<br />
+A: Just destroy the chest whose particles you want to remove. Restart the server and the particles will be removed.<br />
+**Q:** Will the crates have floating text above them?<br />
+A: Yes, they will have Floating Text. <br />
+**Q:** Can I edit the floating text that appears above the crate?<br />
+A: Yes you can. Navigate to `blocks.yml` and edit the crate text you see. For example, you want to edit the floating text of legendary crate then there would be a key\heading of `legendary:` in the `blocks.yml` file. Edit the text after the `:` to edit\change the floating text.<br />
+**Q:** I found a issue in the plugin what do I do?<br />
+A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) and give as much detail as possible.<br />
+**Q:** I would like a new feature to be added. How do I report?<br />
+A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.<br />
 ### Commands and Permissions
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
