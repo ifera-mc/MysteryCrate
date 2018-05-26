@@ -238,11 +238,7 @@ class EventListener implements Listener
 						if ($block->getId() == Block::CHEST) {
 							$b = $block->getLevel()->getBlock($block->subtract(0 , 1));
 							if ($this->plugin->isCrateBlock($b->getId() , $b->getDamage())) {
-								if ($this->plugin->task !== null && $this->plugin->task->isCanTakeItem()) {
-									$event->setCancelled(true);
-								} else {
-									$event->setCancelled(true);
-								}
+								$event->setCancelled(true);
 							}
 						}
 					}
