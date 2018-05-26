@@ -41,7 +41,7 @@ A: Yes you can. Navigate to `blocks.yml` and edit the crate text you see. For ex
 **Q: I found a issue in the plugin what do I do?**<br />
 A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) and give as much detail as possible.<br /><br />
 **Q: I would like a new feature to be added. How do I report?**<br />
-A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.<br /><br />
+A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.<br />
 ### Commands and Permissions
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
