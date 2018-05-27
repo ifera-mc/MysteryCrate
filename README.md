@@ -1,3 +1,4 @@
+![MysteryCrate Banner](https://github.com/JackMD/MysteryCrate/blob/master/meta/MysteryCrate.png)
 # MysteryCrate
 
 | HitCount | License | Poggit | Release |
