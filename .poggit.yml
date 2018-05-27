@@ -4,4 +4,5 @@ branches:
 projects:
   MysteryCrate:
     path: ""
+    icon: meta/MysteryCrate.png
 ...
