@@ -35,6 +35,11 @@ namespace JackMD\MysteryCrate;
 
 use JackMD\MysteryCrate\Commands\KeyCommand;
 use JackMD\MysteryCrate\Particles\CloudRain;
+use JackMD\MysteryCrate\Particles\Crown;
+use JackMD\MysteryCrate\Particles\DoubleHelix;
+use JackMD\MysteryCrate\Particles\Dring;
+use JackMD\MysteryCrate\Particles\Helix;
+use JackMD\MysteryCrate\Particles\Ting;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
@@ -117,14 +122,31 @@ class Main extends PluginBase{
 	public function initParticleShow(){
 		$positions = $this->blocks;
 		$types = $this->getCrateTypes();
+		$particleType = $this->getConfig()->get("particleType");
+		$particleTickRate = $this->getConfig()->get("particleTickRate");
 		foreach($types as $type){
 			$x = $positions->get("$type.x");
 			$y = $positions->get("$type.y");
 			$z = $positions->get("$type.z");
 			if(!empty($x)){
 				$pos = new Vector3($x + 0.5, $y, $z + 0.5);
-				$taskCloud = new CloudRain($this, $pos);
-				$this->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
+				$task = "";
+				if($particleType == "Helix"){
+					$task = new Helix($this, $pos);
+				}elseif($particleType == "DoubleHelix"){
+					$task = new DoubleHelix($this, $pos);
+				}elseif($particleType == "CloudRain"){
+					$task = new CloudRain($this, $pos);
+				}elseif($particleType == "Ting"){
+					$task = new Ting($this, $pos);
+				}elseif($particleType == "Crown"){
+					$task = new Crown($this, $pos);
+				}
+				if($task !== ""){
+					$this->getScheduler()->scheduleRepeatingTask($task, $particleTickRate);
+				}else{
+					$this->getLogger()->debug(TextFormat::DARK_RED . "Please set the particleType in config.yml correctly. Allowed types are CloudRain, Helix, DoubleHelix, Ting, Crown");
+				}
 			}
 		}
 	}
