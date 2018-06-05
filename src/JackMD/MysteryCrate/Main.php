@@ -25,7 +25,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -52,47 +51,39 @@ use pocketmine\utils\TextFormat;
  *
  * @package MysteryCrate
  */
-class Main extends PluginBase
-{
+class Main extends PluginBase{
+	
 	public $notInUse = true;
 	public $task, $crates, $crateDrops, $crateBlocks, $textParticles;
-	private $key;
-
 	/** @var Config */
 	public $blocks;
-
-	public function onEnable() : void
-	{
+	private $key;
+	
+	public function onEnable(): void{
 		$this->task = new UpdaterEvent($this);
-
-		if (!is_dir($this->getDataFolder())) {
+		if(!is_dir($this->getDataFolder())){
 			mkdir($this->getDataFolder());
 		}
-
 		$this->saveDefaultConfig();
 		$this->initCrates();
 		$this->initTextParticle();
-
-		if ($this->getConfig()->get("showParticle") !== false) {
-			if ($this->getServer()->getLevelByName($this->getConfig()->get("crateWorld")) !== null) {
+		if($this->getConfig()->get("showParticle") !== false){
+			if($this->getServer()->getLevelByName($this->getConfig()->get("crateWorld")) !== null){
 				$this->initParticleShow();
-			} else {
+			}else{
 				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
 			}
 		}
-
 		$this->key = $this->getConfig()->getNested("key");
-		$this->getServer()->getCommandMap()->register("key" , new KeyCommand("key" , $this) , "key");
-		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this) , $this);
+		$this->getServer()->getCommandMap()->register("key", new KeyCommand("key", $this), "key");
+		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$this->getLogger()->info("Plugin Enabled.");
-
 	}
-
-	public function initCrates()
-	{
+	
+	public function initCrates(){
 		$this->saveResource("crates.yml");
 		$file = new Config($this->getDataFolder() . "crates.yml");
-		foreach ($file->getNested("crates") as $type => $values) {
+		foreach($file->getNested("crates") as $type => $values){
 			$this->crates[$type] = $values;
 			$this->crateDrops[$type] = $values["drops"];
 			$this->crateBlocks[$values["block"]] = $type;
@@ -100,141 +91,126 @@ class Main extends PluginBase
 		$this->saveResource("blocks.yml");
 		$this->blocks = new Config($this->getDataFolder() . "blocks.yml");
 	}
-
-	public function initTextParticle()
-	{
+	
+	public function initTextParticle(){
 		$positions = $this->blocks;
 		$types = $this->getCrateTypes();
-		foreach ($types as $type) {
+		foreach($types as $type){
 			$text = $positions->get($type);
 			$x = $positions->get("$type.x");
 			$y = $positions->get("$type.y");
 			$z = $positions->get("$type.z");
-			if (!empty($x)) {
-				$pos = new Vector3($x + 0.5 , $y + 1 , $z + 0.5);
-				$this->textParticles[$type] = new FloatingTextParticle($pos , '' , $text . TextFormat::RESET);
+			if(!empty($x)){
+				$pos = new Vector3($x + 0.5, $y + 1, $z + 0.5);
+				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
 			}
 		}
 	}
-
-	public function initParticleShow()
-	{
-		$positions = $this->blocks;
-		$types = $this->getCrateTypes();
-		foreach ($types as $type) {
-			$x = $positions->get("$type.x");
-			$y = $positions->get("$type.y");
-			$z = $positions->get("$type.z");
-			if (!empty($x)) {
-				$pos = new Vector3($x + 0.5 , $y , $z + 0.5);
-				$taskCloud = new CloudRain($this, $pos);
-				$this->getServer()->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
-			}
-		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isNotInUse() : bool
-	{
-		return $this->notInUse;
-	}
-
-	/**
-	 * @param bool $notInUse
-	 */
-	public function setNotInUse(bool $notInUse)
-	{
-		$this->notInUse = $notInUse;
-	}
-
+	
 	/**
 	 * @return array
 	 */
-	public function getCrateTypes()
-	{
+	public function getCrateTypes(){
 		return array_keys($this->crates);
 	}
-
+	
+	public function initParticleShow(){
+		$positions = $this->blocks;
+		$types = $this->getCrateTypes();
+		foreach($types as $type){
+			$x = $positions->get("$type.x");
+			$y = $positions->get("$type.y");
+			$z = $positions->get("$type.z");
+			if(!empty($x)){
+				$pos = new Vector3($x + 0.5, $y, $z + 0.5);
+				$taskCloud = new CloudRain($this, $pos);
+				$this->getScheduler()->scheduleRepeatingTask($taskCloud, 5);
+			}
+		}
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isNotInUse(): bool{
+		return $this->notInUse;
+	}
+	
+	/**
+	 * @param bool $notInUse
+	 */
+	public function setNotInUse(bool $notInUse){
+		$this->notInUse = $notInUse;
+	}
+	
 	/**
 	 * @param string $type
 	 * @return int
 	 */
-	public function getCrateDropAmount(string $type)
-	{
+	public function getCrateDropAmount(string $type){
 		return !$this->getCrateType($type) ? 0 : $this->crates[$type]["amount"];
 	}
-
+	
 	/**
 	 * @param string $type
 	 * @return bool
 	 */
-	public function getCrateType(string $type)
-	{
+	public function getCrateType(string $type){
 		return isset($this->crates[$type]) ? $this->crates[$type] : false;
 	}
-
+	
 	/**
 	 * @param string $type
 	 * @return null
 	 */
-	public function getCrateBlock(string $type)
-	{
+	public function getCrateBlock(string $type){
 		return !$this->getCrateDrops($type) ? null : $this->crateBlocks[$type];
 	}
-
+	
 	/**
 	 * @param string $type
 	 * @return null
 	 */
-	public function getCrateDrops(string $type)
-	{
+	public function getCrateDrops(string $type){
 		return !$this->getCrateType($type) ? null : $this->crateDrops[$type];
 	}
-
+	
 	/**
 	 * @param int $id
 	 * @param int $meta
 	 * @return bool
 	 */
-	public function isCrateBlock(int $id , int $meta)
-	{
+	public function isCrateBlock(int $id, int $meta){
 		return isset($this->crateBlocks[$id . ":" . $meta]) ? $this->crateBlocks[$id . ":" . $meta] : false;
 	}
-
+	
 	/**
 	 * @param Item $item
 	 * @return bool
 	 */
-	public function isCrateKey(Item $item)
-	{
-		$values = explode(":" , $this->key);
-
+	public function isCrateKey(Item $item){
+		$values = explode(":", $this->key);
 		return ($values[0] == $item->getId() && $values[1] == $item->getDamage() && !is_null($keytype = $item->getNamedTagEntry("KeyType"))) ? $keytype->getValue() : false;
 	}
-
+	
 	/**
 	 * @param Player $player
 	 * @param string $type
 	 * @param int    $amount
 	 * @return bool
 	 */
-	public function giveKey(Player $player , string $type , int $amount)
-	{
-		if (is_null($this->getCrateDrops($type))) {
-
+	public function giveKey(Player $player, string $type, int $amount){
+		if(is_null($this->getCrateDrops($type))){
 			return false;
 		}
 		$keyID = $this->getConfig()->get("key");
 		$key = Item::fromString($keyID);
 		$key->setCount($amount);
-		$key->setLore([$this->getConfig()->get("descOne") , $this->getConfig()->get("descTwo")]);
-		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255 , "" , Enchantment::RARITY_COMMON , Enchantment::SLOT_ALL , Enchantment::SLOT_NONE , 1)));
+		$key->setLore([$this->getConfig()->get("descOne"), $this->getConfig()->get("descTwo")]);
+		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255, "", Enchantment::RARITY_COMMON, Enchantment::SLOT_ALL, Enchantment::SLOT_NONE, 1)));
 		$key->setCustomName(ucfirst($type . " Key"));
-		$key->setNamedTagEntry(new StringTag("KeyType" , $type));
+		$key->setNamedTagEntry(new StringTag("KeyType", $type));
 		$player->getInventory()->addItem($key);
-
 		return true;
 	}
 }
