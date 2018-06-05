@@ -12,6 +12,7 @@
  *
  * MysteryCrate, a Crate plugin for PocketMine-MP
  * Copyright (c) 2018 JackMD  < https://github.com/JackMD >
+ *
  * Discord: JackMD#3717
  * Twitter: JackMTaylor_
  *
@@ -24,7 +25,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -36,35 +36,29 @@ namespace JackMD\MysteryCrate\Task;
 use JackMD\MysteryCrate\Main;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\scheduler\PluginTask;
+use pocketmine\scheduler\Task;
 
-class RemoveChest extends PluginTask
-{
-    private $plugin, $cpos;
-    public $chest;
-
+class RemoveChest extends Task{
+	
+	private $plugin, $cpos;
+	
 	/**
 	 * RemoveChest constructor.
 	 *
 	 * @param Main    $plugin
 	 * @param Vector3 $cpos
 	 */
-	public function __construct(Main $plugin, Vector3 $cpos)
-    {
-        parent::__construct($plugin);
-        $this->plugin = $plugin;
-        $this->cpos = $cpos;
-    }
-
+	public function __construct(Main $plugin, Vector3 $cpos){
+		$this->plugin = $plugin;
+		$this->cpos = $cpos;
+	}
+	
 	/**
 	 * @param int $tick
 	 */
-	public function onRun(int $tick)
-    {
-        $level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
-        $cpos = $this->cpos;
-
-        $level->setBlock($cpos, Block::get(0));
-
-    }
+	public function onRun(int $tick){
+		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+		$cpos = $this->cpos;
+		$level->setBlock($cpos, Block::get(0));
+	}
 }
