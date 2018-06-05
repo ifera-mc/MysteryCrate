@@ -36,13 +36,12 @@ namespace JackMD\MysteryCrate\Task;
 use JackMD\MysteryCrate\Main;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\scheduler\PluginTask;
+use pocketmine\scheduler\Task;
 
-class PutChest extends PluginTask
-{
-    private $plugin, $cpos, $dmg;
-    public $chest;
-
+class PutChest extends Task{
+	
+	private $plugin, $cpos, $dmg;
+	
 	/**
 	 * PutChest constructor.
 	 *
@@ -50,25 +49,20 @@ class PutChest extends PluginTask
 	 * @param Vector3 $cpos
 	 * @param int     $dmg
 	 */
-	public function __construct(Main $plugin, Vector3 $cpos, int $dmg)
-    {
-        parent::__construct($plugin);
-        $this->plugin = $plugin;
+	public function __construct(Main $plugin, Vector3 $cpos, int $dmg){
+		$this->plugin = $plugin;
 		$this->cpos = $cpos;
 		$this->dmg = $dmg;
 	}
-
+	
 	/**
 	 * @param int $tick
 	 */
-	public function onRun(int $tick)
-    {
-        $level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+	public function onRun(int $tick){
+		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->cpos;
 		$dmg = $this->dmg;
-
-        $level->setBlock($cpos, Block::get(54, $dmg));
-        
-        $this->plugin->setNotInUse(true);
-    }
+		$level->setBlock($cpos, Block::get(54, $dmg));
+		$this->plugin->setNotInUse(true);
+	}
 }
