@@ -25,7 +25,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -38,37 +37,32 @@ use JackMD\MysteryCrate\Main;
 use pocketmine\level\particle\ExplodeParticle;
 use pocketmine\level\particle\WaterDripParticle;
 use pocketmine\math\Vector3;
-use pocketmine\scheduler\PluginTask;
+use pocketmine\scheduler\Task;
 
-class CloudRain extends PluginTask
-{
-    private $plugin, $pos;
-
-    public function __construct(Main $plugin, Vector3 $pos)
-    {
-        parent::__construct($plugin);
-        $this->plugin = $plugin;
-        $this->pos = $pos;
-    }
-
-    /**
-     * @param int $tick
-     */
-    public function onRun(int $tick)
-    {
-        $level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
-        $cpos = $this->pos;
-
-        $time = 1;
-        $pi = 3.14159;
-        $time = $time + 0.1 / $pi;
-        for ($i = 0; $i <= 2 * $pi; $i += $pi / 8) {
-            $x = $time * cos($i);
-            $y = exp(-0.1 * $time) * sin($time) + 1.5;
-            $z = $time * sin($i);
-            $level->addParticle(new ExplodeParticle($cpos->add($x, $y, $z)));
-            $level->addParticle(new WaterDripParticle($cpos->add($x, $y, $z)));
-
-        }
-    }
+class CloudRain extends Task{
+	
+	private $plugin, $pos;
+	
+	public function __construct(Main $plugin, Vector3 $pos){
+		$this->plugin = $plugin;
+		$this->pos = $pos;
+	}
+	
+	/**
+	 * @param int $tick
+	 */
+	public function onRun(int $tick){
+		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+		$cpos = $this->pos;
+		$time = 1;
+		$pi = 3.14159;
+		$time = $time + 0.1 / $pi;
+		for($i = 0; $i <= 2 * $pi; $i += $pi / 8){
+			$x = $time * cos($i);
+			$y = exp(-0.1 * $time) * sin($time) + 1.5;
+			$z = $time * sin($i);
+			$level->addParticle(new ExplodeParticle($cpos->add($x, $y, $z)));
+			$level->addParticle(new WaterDripParticle($cpos->add($x, $y, $z)));
+		}
+	}
 }
