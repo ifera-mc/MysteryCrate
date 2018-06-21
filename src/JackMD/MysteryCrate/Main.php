@@ -25,6 +25,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
+ * 
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -228,7 +229,7 @@ class Main extends PluginBase{
 		$keyID = $this->getConfig()->get("key");
 		$key = Item::fromString($keyID);
 		$key->setCount($amount);
-		$key->setLore([$this->getConfig()->get("descOne"), $this->getConfig()->get("descTwo")]);
+		$key->setLore([$this->getConfig()->get("lore")]);
 		$key->addEnchantment(new EnchantmentInstance(new Enchantment(255, "", Enchantment::RARITY_COMMON, Enchantment::SLOT_ALL, Enchantment::SLOT_NONE, 1)));
 		$key->setCustomName(ucfirst($type . " Key"));
 		$key->setNamedTagEntry(new StringTag("KeyType", $type));
