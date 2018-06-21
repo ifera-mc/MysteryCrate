@@ -25,12 +25,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
+ * 
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
  * ------------------------------------------------------------------------
  */
-
 
 namespace JackMD\MysteryCrate;
 
@@ -165,41 +165,47 @@ class EventListener implements Listener{
 				if(!$player->hasPermission("mc.crates.use")){
 					$event->setCancelled();
 					$player->sendMessage(TextFormat::RED . "You do not have permission to use a crate.");
+					return;
 				}else{
 					if(!($keytype = $this->plugin->isCrateKey($item)) || $keytype !== $type){
 						$event->setCancelled();
 						$player->sendMessage(TextFormat::RED . "You require a " . ucfirst($type) . " key to open this crate.");
-					}else{
-						$event->setCancelled(false);
-						if($this->plugin->isNotInUse()){
-							$this->plugin->setNotInUse(false);
-							$chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));;
-							if($chest instanceof ChestTile){
-								$chest->getInventory()->clearAll();
-								$this->plugin->task->chest = $chest;
-								$this->plugin->task->player = $player;
-								$this->plugin->task->setTDelay($this->plugin->getConfig()->get("tickDelay") * 20);
-								$item = $player->getInventory()->getItemInHand();
-								$item->setCount($item->getCount() - 1);
-								$item->setDamage($item->getDamage());
-								$event->getPlayer()->getInventory()->setItemInHand($item);
-								$this->plugin->getScheduler()->scheduleRepeatingTask($this->plugin->task, 5);
-								//Particle upon opening chest
-								$cx = $block->getX() + 0.5;
-								$cy = $block->getY() + 1.2;
-								$cz = $block->getZ() + 0.5;
-								$radius = (int) 1;
-								for($i = 0; $i < 361; $i += 1.1){
-									$x = $cx + ($radius * cos($i));
-									$z = $cz + ($radius * sin($i));
-									$pos = new Vector3($x, $cy, $z);
-									$block->level->addParticle(new LavaParticle($pos));
-								}
+						return;
+					}elseif($player->isSneaking()){
+						$event->setCancelled();
+						$player->sendMessage(TextFormat::RED . "Crate cannot open because you are sneaking.");
+						return;
+					}
+					$event->setCancelled(false);
+					if($this->plugin->isNotInUse()){
+						$this->plugin->setNotInUse(false);
+						$chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));;
+						if($chest instanceof ChestTile){
+							$chest->getInventory()->clearAll();
+							$this->plugin->task->chest = $chest;
+							$this->plugin->task->player = $player;
+							$this->plugin->task->setTDelay($this->plugin->getConfig()->get("tickDelay") * 20);
+							$item = $player->getInventory()->getItemInHand();
+							$item->setCount($item->getCount() - 1);
+							$item->setDamage($item->getDamage());
+							$event->getPlayer()->getInventory()->setItemInHand($item);
+							$this->plugin->getScheduler()->scheduleRepeatingTask($this->plugin->task, 5);
+							//Particle upon opening chest
+							$cx = $block->getX() + 0.5;
+							$cy = $block->getY() + 1.2;
+							$cz = $block->getZ() + 0.5;
+							$radius = (int) 1;
+							for($i = 0; $i < 361; $i += 1.1){
+								$x = $cx + ($radius * cos($i));
+								$z = $cz + ($radius * sin($i));
+								$pos = new Vector3($x, $cy, $z);
+								$block->level->addParticle(new LavaParticle($pos));
 							}
-						}else{
-							$event->setCancelled();
-							$player->sendMessage(TextFormat::RED . "The crate is in use. Please wait...");
 						}
+					}else{
+						$event->setCancelled();
+						$player->sendMessage(TextFormat::RED . "The crate is in use. Please wait...");
+						return;
 					}
 				}
 			}
