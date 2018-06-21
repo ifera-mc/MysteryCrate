@@ -25,6 +25,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
+ *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -43,9 +44,10 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\level\sound\ClickSound;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
-use pocketmine\Server;
 use pocketmine\tile\Chest as ChestTile;
 use pocketmine\utils\TextFormat;
 
@@ -56,7 +58,6 @@ class UpdaterEvent extends Task{
 	public $main, $level, $plugin, $item, $player, $chest;
 	/** @var ChestBlock */
 	public $block;
-	private $cmd;
 	
 	/**
 	 * UpdaterEvent constructor.
@@ -113,10 +114,13 @@ class UpdaterEvent extends Task{
 							$i->setLore([$values["lore"]]);
 						}
 						$player = $this->player;
-						if(isset($values["command"])){
-							$cmd = $values["command"];
-							$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
-							$this->cmd = $cmd;
+						if(isset($values["commands"])){
+							foreach($values["commands"] as $index => $cmd){
+								$nbt = $i->getNamedTag() ?? new CompoundTag("", []);
+								$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
+								$nbt->setString($index, $cmd);
+								$i->setNamedTag($nbt);
+							}
 						}
 						$cInv = $this->chest->getInventory();
 						$this->setItem(10, $cInv->getItem(11), $cInv->getItem(11)->getCount(), $cInv->getItem(11)->getDamage());
@@ -144,11 +148,17 @@ class UpdaterEvent extends Task{
 					$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
 					if($this->player instanceof Player){
 						if($slot13->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
-							Server::getInstance()->dispatchCommand(new ConsoleCommandSender(), $this->cmd);
+							$nbt = $slot13->getNamedTag();
+							for($i = 0; $i < $this->plugin->getConfig()->get("maxCommands"); $i++){
+								if($nbt->hasTag($i, StringTag::class)){
+									$cmd = $nbt->getString($i);
+									$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), $cmd);
+								}
+							}
 						}else{
 							$this->player->getInventory()->addItem($slot13);
+							$this->player->sendMessage(TextFormat::GREEN . "You received " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
 						}
-						$this->player->sendMessage(TextFormat::GREEN . "You recieved " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
 					}
 					$cpos = $block;
 					$dmg = $block->getDamage();

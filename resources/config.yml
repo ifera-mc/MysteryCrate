@@ -33,9 +33,8 @@
 # Its better not to edit this value unless you can edit the source code.
 key: "339:0"
 
-# The the description for the Key.
-descOne: "Use this key at /warp crates."
-descTwo: "Get a chance to win OP stuff!"
+# The the description for the Key. Use \n for next line.
+lore: "Use this key at /warp crates.\nWin OP stuff."
 
 # Enter the name of the FOLDER of the world in which crate is located.
 # Example if your world name is spawn but folder name is spw then enter spw in crateWorld
@@ -45,6 +44,9 @@ crateWorld: "Master"
 # If you want to reward the player with a command, set the meta of the reward in the crates.yml
 # to the value you set in commandMeta.
 commandMeta: 50
+
+# Set the maximum number of commands that can be executed at a time.
+maxCommands: 5
 
 # Set for how long you want the task to run. Increasing this value will increase the
 # time taken for the player to earn the reward and vice versa.
@@ -59,7 +61,7 @@ showParticle: true
 # Mention the particle type you want to display above the crate.
 # Currently there are only three types.
 # Types: CloudRain , Helix , DoubleHelix , Ting , Crown
-particleType: "CloudRain"
+particleType: "Helix"
 
 # Adjust the tick rate of particles.
 # Default is 5.

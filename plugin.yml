@@ -1,7 +1,7 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
 api: [3.0.0]
-version: 6.1.0
+version: 6.2.0
 author: JackMD
 authors: [DaPigGuy]
 load: POSTWORLD
