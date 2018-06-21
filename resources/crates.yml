@@ -24,7 +24,9 @@ crates:
 #       unbreaking:      | You can set multiple enchants as long as they are registered.
 #         level: 2       | NOTE: If you donot want enchants simply remove the enchantments heading.
 #     lore: "USE ME"     | Add a custom lore to the reward. Use "\n" for next line.
-#     command: "say hi"  | Add a command that will be executed when player wins a reward. Use "%PLAYER%" to insert player name.
+#     commands:          | Add commands to execute when player wins a reward. Multiple commands supported.
+#     - "say hi"         | Use \"%PLAYER%\" to insert player name (with the quotes and slash).
+#     - "say test"       | Don't forget to mention the maxCommands in config.yml.
 #  block: "911:0"        | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
 # ------------------------------------------------------------------------------------------------------------------------------
   common:
@@ -48,7 +50,9 @@ crates:
         id: 339
         meta: 50
         amount: 1
-        command: "givemoney %PLAYER% 100000"
+        commands:
+        - "givemoney \"%PLAYER%\" 100000"
+        - "say \"%PLAYER%\" won $100,000."
       - name: "Iron Ingot"
         id: 265
         meta: 0
@@ -86,17 +90,13 @@ crates:
     block: "57:0"
   legendary:
     drops:
-      - name: "Obsidian"
-        id: 49
-        meta: 0
-        amount: 32
-      - name: "Enchanted Apple"
-        id: 466
+      - name: "Golden Apple"
+        id: 322
         meta: 0
         amount: 16
-      - name: "Bedrock"
-        id: 7
+      - name: "Emerald"
+        id: 388
         meta: 0
-        amount: 5
+        amount: 16
     block: "133:0"
 ...
