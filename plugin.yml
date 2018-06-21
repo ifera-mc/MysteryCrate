@@ -1,6 +1,6 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
-api: [3.0.0-ALPHA12]
+api: [3.0.0]
 version: 6.1.0
 author: JackMD
 authors: [DaPigGuy]
