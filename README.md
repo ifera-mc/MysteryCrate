@@ -48,7 +48,7 @@ A: You need not to do anything with it unless you want to edit the floatiing tex
 ### Commands and Permissions
 |Description|Command|Permission|Default|
 |:--:|:--:|:--:|:--:|
-|Crate Key|`/key [playerName] [amount]`|`mc.command.key`|`op`|
+|Crate Key|`/key [type] [player] [amount]`|`mc.command.key`|`op`|
 |Use a crate|`~`|`mc.crates.use`|`true`|
 |Destroy a crate|`~`|`mc.crates.destroy`|`op`|
 |Create a crate|`~`|`mc.crates.create`|`op`|
