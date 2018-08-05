@@ -37,7 +37,6 @@ namespace JackMD\MysteryCrate;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -45,7 +44,6 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
-use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
@@ -161,7 +159,6 @@ class EventListener implements Listener{
 		$item = $event->getItem();
 		if($player->getLevel() === $lev){
 			if($block->getId() == Block::CHEST && ($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())) !== false){
-				$this->plugin->task->block = $block;
 				if(!$player->hasPermission("mc.crates.use")){
 					$event->setCancelled();
 					$player->sendMessage(TextFormat::RED . "You do not have permission to use a crate.");
@@ -176,11 +173,12 @@ class EventListener implements Listener{
 						$player->sendMessage(TextFormat::RED . "Crate cannot open because you are sneaking.");
 						return;
 					}
-					$event->setCancelled(false);
 					if($this->plugin->isNotInUse()){
+						$event->setCancelled(false);
 						$this->plugin->setNotInUse(false);
 						$chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));;
 						if($chest instanceof ChestTile){
+							$this->plugin->task->block = $block;
 							$chest->getInventory()->clearAll();
 							$this->plugin->task->chest = $chest;
 							$this->plugin->task->player = $player;
@@ -203,7 +201,7 @@ class EventListener implements Listener{
 							}
 						}
 					}else{
-						$event->setCancelled();
+						$event->setCancelled(true);
 						$player->sendMessage(TextFormat::RED . "The crate is in use. Please wait...");
 						return;
 					}
@@ -272,30 +270,6 @@ class EventListener implements Listener{
 			if($lev->getFolderName() == $crateLevel){
 				foreach($particles as $particle){
 					$lev->addParticle($particle, [$event->getPlayer()]);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * @param EntityLevelChangeEvent $event
-	 */
-	public function onLevelChange(EntityLevelChangeEvent $event){
-		$targetLevel = $event->getTarget();
-		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
-		if(!empty($this->plugin->textParticles)){
-			$particles = array_values($this->plugin->textParticles);
-			foreach($particles as $particle){
-				if($particle instanceof FloatingTextParticle){
-					if($targetLevel->getFolderName() == $crateLevel){
-						$particle->setInvisible(false);
-						$lev = $event->getTarget();
-						$lev->addParticle($particle, [$event->getEntity()]);
-					}else{
-						$particle->setInvisible(true);
-						$lev = $event->getOrigin();
-						$lev->addParticle($particle, [$event->getEntity()]);
-					}
 				}
 			}
 		}

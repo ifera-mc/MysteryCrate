@@ -38,7 +38,6 @@ use JackMD\MysteryCrate\Commands\KeyCommand;
 use JackMD\MysteryCrate\Particles\CloudRain;
 use JackMD\MysteryCrate\Particles\Crown;
 use JackMD\MysteryCrate\Particles\DoubleHelix;
-use JackMD\MysteryCrate\Particles\Dring;
 use JackMD\MysteryCrate\Particles\Helix;
 use JackMD\MysteryCrate\Particles\Ting;
 use pocketmine\item\enchantment\Enchantment;
@@ -59,8 +58,10 @@ use pocketmine\utils\TextFormat;
  */
 class Main extends PluginBase{
 	
-	public $notInUse = true;
-	public $task, $crates, $crateDrops, $crateBlocks, $textParticles;
+	public $notInUse = false;
+	/** @var UpdaterEvent */
+	public $task;
+	public $crates, $crateDrops, $crateBlocks, $textParticles;
 	/** @var Config */
 	public $blocks;
 	private $key;
@@ -80,6 +81,7 @@ class Main extends PluginBase{
 				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
 			}
 		}
+		$this->setNotInUse(true);
 		$this->key = $this->getConfig()->getNested("key");
 		$this->getServer()->getCommandMap()->register("key", new KeyCommand("key", $this), "key");
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
