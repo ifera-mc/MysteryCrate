@@ -25,7 +25,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -61,7 +61,9 @@ class Main extends PluginBase{
 	public $notInUse = false;
 	/** @var UpdaterEvent */
 	public $task;
-	public $crates, $crateDrops, $crateBlocks, $textParticles;
+	public $crates, $crateDrops, $crateBlocks;
+	/** @var FloatingTextParticle[] */
+	public $textParticles;
 	/** @var Config */
 	public $blocks;
 	private $key;
@@ -73,7 +75,6 @@ class Main extends PluginBase{
 		}
 		$this->saveDefaultConfig();
 		$this->initCrates();
-		$this->initTextParticle();
 		if($this->getConfig()->get("showParticle") !== false){
 			if($this->getServer()->getLevelByName($this->getConfig()->get("crateWorld")) !== null){
 				$this->initParticleShow();
@@ -81,6 +82,7 @@ class Main extends PluginBase{
 				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
 			}
 		}
+		$this->initTextParticle();
 		$this->setNotInUse(true);
 		$this->key = $this->getConfig()->getNested("key");
 		$this->getServer()->getCommandMap()->register("key", new KeyCommand("key", $this), "key");
@@ -98,28 +100,6 @@ class Main extends PluginBase{
 		}
 		$this->saveResource("blocks.yml");
 		$this->blocks = new Config($this->getDataFolder() . "blocks.yml");
-	}
-	
-	public function initTextParticle(){
-		$positions = $this->blocks;
-		$types = $this->getCrateTypes();
-		foreach($types as $type){
-			$text = $positions->get($type);
-			$x = $positions->get("$type.x");
-			$y = $positions->get("$type.y");
-			$z = $positions->get("$type.z");
-			if(!empty($x)){
-				$pos = new Vector3($x + 0.5, $y + 1, $z + 0.5);
-				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
-			}
-		}
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getCrateTypes(){
-		return array_keys($this->crates);
 	}
 	
 	public function initParticleShow(){
@@ -149,6 +129,40 @@ class Main extends PluginBase{
 					$this->getScheduler()->scheduleRepeatingTask($task, $particleTickRate);
 				}else{
 					$this->getLogger()->debug(TextFormat::DARK_RED . "Please set the particleType in config.yml correctly. Allowed types are CloudRain, Helix, DoubleHelix, Ting, Crown");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getCrateTypes(){
+		return array_keys($this->crates);
+	}
+	
+	public function initTextParticle(){
+		$positions = $this->blocks;
+		$types = $this->getCrateTypes();
+		foreach($types as $type){
+			$text = $positions->get($type);
+			$x = $positions->get($type . ".x");
+			$y = $positions->get($type . ".y");
+			$z = $positions->get($type . ".z");
+			if(!empty($x)){
+				$pos = new Vector3($x + 0.5, $y + 1, $z + 0.5);
+				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
+			}
+		}
+	}
+	
+	public function addParticles(Player $player){
+		$particles = array_values($this->textParticles);
+		foreach($particles as $particle){
+			if($particle instanceof FloatingTextParticle){
+				foreach($particle->encode() as $packet){
+					$particle->setInvisible(false);
+					$player->dataPacket($packet);
 				}
 			}
 		}

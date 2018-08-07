@@ -25,7 +25,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License v3.0 for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
@@ -46,7 +46,6 @@ use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
 use pocketmine\tile\Chest as ChestTile;
 use pocketmine\utils\TextFormat;
 
@@ -64,39 +63,41 @@ class EventListener implements Listener{
 	
 	/**
 	 * @param BlockBreakEvent $event
+	 * @priority        HIGHEST
 	 */
 	public function onBreak(BlockBreakEvent $event){
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
-		if(!$player->isOp()){
+		if(!($player->hasPermission("mc.crates.destroy"))){
 			if($this->plugin->isCrateBlock($block->getId(), $block->getDamage())){
 				if($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST){
-					if(!$player->hasPermission("mc.crates.destroy")){
-						$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
-						$event->setCancelled();
-					}
+					$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
+					$event->setCancelled();
 				}
 			}elseif($block->getId() == Block::CHEST){
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				if($this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-					if(!$player->hasPermission("mc.crates.destroy")){
-						$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
-						$event->setCancelled();
-					}
+					$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
+					$event->setCancelled();
 				}
 			}
-		}
-		if($block->getId() == Block::CHEST){
-			$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-			if($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-				$cfg = $this->plugin->blocks;
-				if(!empty($cfg->get($type))){
-					$cfg->remove($type);
-					$cfg->remove("$type.x");
-					$cfg->remove("$type.y");
-					$cfg->remove("$type.z");
-					$cfg->save();
-					$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully destroyed. Reload the server to remove floating text.");
+		}else{
+			if($block->getId() == Block::CHEST){
+				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
+				if($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
+					$cfg = $this->plugin->blocks;
+					if(!empty($cfg->get($type))){
+						$cfg->remove($type);
+						$cfg->remove($type . ".x");
+						$cfg->remove($type . ".y");
+						$cfg->remove($type . ".z");
+						$cfg->save();
+						if(isset($this->plugin->textParticles[$type])){
+							unset($this->plugin->textParticles[$type]);
+							$this->plugin->initTextParticle();
+						}
+						$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully destroyed. Restart the server to remove floating text.");
+					}
 				}
 			}
 		}
@@ -104,42 +105,43 @@ class EventListener implements Listener{
 	
 	/**
 	 * @param BlockPlaceEvent $event
+	 * @priority        HIGHEST
 	 */
 	public function onPlace(BlockPlaceEvent $event){
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
-		if(!$player->isOp()){
+		if(!($player->hasPermission("mc.crates.create"))){
 			if($this->plugin->isCrateBlock($block->getId(), $block->getDamage())){
 				if($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST){
-					if(!$player->hasPermission("mc.crates.create")){
-						$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
-						$event->setCancelled();
-					}
+					$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
+					$event->setCancelled();
 				}
 			}elseif($block->getId() == Block::CHEST){
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				if($this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-					if(!$player->hasPermission("mc.crates.create")){
-						$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
-						$event->setCancelled();
-					}
+					$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
+					$event->setCancelled();
 				}
 			}
-		}
-		if($block->getId() == Block::CHEST){
-			$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-			if($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-				$x = $block->getX();
-				$y = $block->getY();
-				$z = $block->getZ();
-				$cfg = $this->plugin->blocks;
-				if(empty($cfg->get($type))){
-					$cfg->set($type, TextFormat::GOLD . ucfirst($type) . " " . TextFormat::GREEN . "Crate");
-					$cfg->set("$type.x", $x);
-					$cfg->set("$type.y", $y);
-					$cfg->set("$type.z", $z);
-					$cfg->save();
-					$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully placed. Reload the server to add floating text.");
+		}else{
+			if($block->getId() == Block::CHEST){
+				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
+				if($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
+					$x = $block->getX();
+					$y = $block->getY();
+					$z = $block->getZ();
+					$cfg = $this->plugin->blocks;
+					if(empty($cfg->get($type))){
+						$cfg->set($type, TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " Crate");
+						$cfg->set($type . ".x", $x);
+						$cfg->set($type . ".y", $y);
+						$cfg->set($type . ".z", $z);
+						$cfg->save();
+						if(!isset($this->plugin->textParticles[$type])){
+							$this->plugin->initTextParticle();
+						}
+						$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully placed. Restart the server to add floating text.");
+					}
 				}
 			}
 		}
@@ -148,11 +150,10 @@ class EventListener implements Listener{
 	/**
 	 * @param PlayerInteractEvent $event
 	 * @priority        HIGHEST
-	 * @ignoreCancelled false
 	 */
 	public function onInteract(PlayerInteractEvent $event){
 		$levelName = $this->plugin->getConfig()->get("crateWorld");
-		$lev = Server::getInstance()->getLevelByName($levelName);
+		$lev =$this->plugin->getServer()->getLevelByName($levelName);
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		$b = $block->getLevel()->getBlock($block->subtract(0, 1));
@@ -212,10 +213,11 @@ class EventListener implements Listener{
 	
 	/**
 	 * @param InventoryTransactionEvent $event
+	 * @priority        HIGHEST
 	 */
 	public function onTransaction(InventoryTransactionEvent $event){
 		$levelName = $this->plugin->getConfig()->get("crateWorld");
-		$lev = Server::getInstance()->getLevelByName($levelName);
+		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$player = $event->getTransaction()->getSource();
 		if($player->getLevel() === $lev){
 			foreach($event->getTransaction()->getActions() as $action){
@@ -241,7 +243,7 @@ class EventListener implements Listener{
 	 */
 	public function onInventoryClose(InventoryCloseEvent $event){
 		$levelName = $this->plugin->getConfig()->get("crateWorld");
-		$lev = Server::getInstance()->getLevelByName($levelName);
+		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$che = $event->getInventory();
 		$player = $event->getPlayer();
 		if($player->getLevel() === $lev){
@@ -262,16 +264,7 @@ class EventListener implements Listener{
 	/**
 	 * @param PlayerJoinEvent $event
 	 */
-	public function PlayerJoinEvent(PlayerJoinEvent $event){
-		$lev = $event->getPlayer()->getLevel();
-		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
-		if(!empty($this->plugin->textParticles)){
-			$particles = array_values($this->plugin->textParticles);
-			if($lev->getFolderName() == $crateLevel){
-				foreach($particles as $particle){
-					$lev->addParticle($particle, [$event->getPlayer()]);
-				}
-			}
-		}
+	public function onJoin(PlayerJoinEvent $event){
+		$this->plugin->addParticles($event->getPlayer());
 	}
 }
