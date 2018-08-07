@@ -137,9 +137,6 @@ class EventListener implements Listener{
 						$cfg->set($type . ".y", $y);
 						$cfg->set($type . ".z", $z);
 						$cfg->save();
-						if(!isset($this->plugin->textParticles[$type])){
-							$this->plugin->initTextParticle();
-						}
 						$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully placed. Restart the server to add floating text.");
 					}
 				}
