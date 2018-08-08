@@ -156,13 +156,18 @@ class Main extends PluginBase{
 		}
 	}
 	
+	/**
+	 * @param Player $player
+	 */
 	public function addParticles(Player $player){
-		$particles = array_values($this->textParticles);
-		foreach($particles as $particle){
-			if($particle instanceof FloatingTextParticle){
-				foreach($particle->encode() as $packet){
-					$particle->setInvisible(false);
-					$player->dataPacket($packet);
+		if(isset($this->textParticles)){
+			$particles = array_values($this->textParticles);
+			foreach($particles as $particle){
+				if($particle instanceof FloatingTextParticle){
+					foreach($particle->encode() as $packet){
+						$particle->setInvisible(false);
+						$player->dataPacket($packet);
+					}
 				}
 			}
 		}
