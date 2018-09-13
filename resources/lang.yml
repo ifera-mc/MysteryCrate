@@ -1,0 +1,24 @@
+---
+# MysteryCrate Language File.
+#
+# Use "§" for adding colors.
+
+no_perm_use_crate: "§cYou do not have permission to use a crate."
+no_perm_destroy: "§cYou do not have permission to destroy a crate."
+no_perm_create: "§cYou do not have permission to create a crate."
+
+crate_destroy_successful: "§aCrate successfully destroyed. Restart the server to remove floating text."
+crate_place_successful: "§aCrate successfully placed. Restart the server to add floating text."
+
+no_key: "§cYou require a %TYPE% key to open this crate."
+
+error_sneak: "§cCrate cannot open because you are sneaking."
+error_crate_in_use: "§cThe crate is in use. Please wait..."
+
+# The message that will be sent to the players when they win a reward from the crate.
+# Optional:
+# %REWARD% - The name of the reward given to the player.
+# %COUNT% - The amount of the reward the player would receive.
+# %CRATE% - The name of the crate from which player received the reward.
+win_message: "§aYou received §e%REWARD% §d(x%COUNT%) §afrom §6%CRATE% §acrate."
+...
