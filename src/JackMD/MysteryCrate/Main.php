@@ -40,6 +40,7 @@ use JackMD\MysteryCrate\Particles\Crown;
 use JackMD\MysteryCrate\Particles\DoubleHelix;
 use JackMD\MysteryCrate\Particles\Helix;
 use JackMD\MysteryCrate\Particles\Ting;
+use JackMD\MysteryCrate\Utils\Lang;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
@@ -70,9 +71,12 @@ class Main extends PluginBase{
 	
 	public function onEnable(): void{
 		$this->task = new UpdaterEvent($this);
+		
 		if(!is_dir($this->getDataFolder())){
 			mkdir($this->getDataFolder());
 		}
+		
+		Lang::init($this);
 		$this->saveDefaultConfig();
 		$this->initCrates();
 		if($this->getConfig()->get("showParticle") !== false){

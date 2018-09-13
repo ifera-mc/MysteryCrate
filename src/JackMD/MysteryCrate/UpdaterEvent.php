@@ -34,6 +34,7 @@
 
 namespace JackMD\MysteryCrate;
 
+use JackMD\MysteryCrate\Utils\Lang;
 use JackMD\MysteryCrate\Task\PutChest;
 use JackMD\MysteryCrate\Task\RemoveChest;
 use PiggyCustomEnchants\CustomEnchants\CustomEnchants;
@@ -49,7 +50,6 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\tile\Chest as ChestTile;
-use pocketmine\utils\TextFormat;
 
 class UpdaterEvent extends Task{
 	
@@ -113,11 +113,10 @@ class UpdaterEvent extends Task{
 						if(isset($values["lore"])){
 							$i->setLore([$values["lore"]]);
 						}
-						$player = $this->player;
 						if(isset($values["commands"])){
 							foreach($values["commands"] as $index => $cmd){
 								$nbt = $i->getNamedTag() ?? new CompoundTag("", []);
-								$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
+								$cmd = str_replace(["%PLAYER%"], [$this->player->getName()], $cmd);
 								$nbt->setString($index, $cmd);
 								$i->setNamedTag($nbt);
 							}
@@ -157,13 +156,13 @@ class UpdaterEvent extends Task{
 							}
 						}else{
 							$this->player->getInventory()->addItem($slot13);
-							$this->player->sendMessage(TextFormat::GREEN . "You received " . TextFormat::YELLOW . $slot13->getName() . TextFormat::LIGHT_PURPLE . " (x" . $slot13->getCount() . ")" . TextFormat::GREEN . " from " . TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " crate.");
+							$win_message = str_replace(["%REWARD%", "%COUNT%", "%CRATE%"], [$slot13->getName(), $slot13->getCount(), ucfirst($type)], Lang::$win_message);
+							$this->player->sendMessage($win_message);
 						}
 					}
-					$cpos = $block;
 					$dmg = $block->getDamage();
-					$this->plugin->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin, $cpos), 20);
-					$this->plugin->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $cpos, $dmg), 24);
+					$this->plugin->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin, $block), 20);
+					$this->plugin->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $block, $dmg), 24);
 					$this->plugin->getScheduler()->cancelTask($this->getTaskId());
 				}
 			}

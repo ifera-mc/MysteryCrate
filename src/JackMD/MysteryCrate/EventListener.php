@@ -34,6 +34,7 @@
 
 namespace JackMD\MysteryCrate;
 
+use JackMD\MysteryCrate\Utils\Lang;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -71,13 +72,13 @@ class EventListener implements Listener{
 		if(!($player->hasPermission("mc.crates.destroy"))){
 			if($this->plugin->isCrateBlock($block->getId(), $block->getDamage())){
 				if($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST){
-					$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
+					$player->sendMessage(Lang::$no_perm_destroy);
 					$event->setCancelled();
 				}
 			}elseif($block->getId() == Block::CHEST){
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				if($this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-					$player->sendMessage(TextFormat::RED . "You do not have permission to destroy a crate.");
+					$player->sendMessage(Lang::$no_perm_destroy);
 					$event->setCancelled();
 				}
 			}
@@ -96,7 +97,7 @@ class EventListener implements Listener{
 							unset($this->plugin->textParticles[$type]);
 							$this->plugin->initTextParticle();
 						}
-						$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully destroyed. Restart the server to remove floating text.");
+						$player->sendMessage(Lang::$crate_destroy_successful);
 					}
 				}
 			}
@@ -113,13 +114,13 @@ class EventListener implements Listener{
 		if(!($player->hasPermission("mc.crates.create"))){
 			if($this->plugin->isCrateBlock($block->getId(), $block->getDamage())){
 				if($block->getLevel()->getBlock($block->add(0, 1))->getId() == Block::CHEST){
-					$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
+					$player->sendMessage(Lang::$no_perm_create);
 					$event->setCancelled();
 				}
 			}elseif($block->getId() == Block::CHEST){
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				if($this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-					$player->sendMessage(TextFormat::RED . "You do not have permission to create a crate.");
+					$player->sendMessage(Lang::$no_perm_create);
 					$event->setCancelled();
 				}
 			}
@@ -137,7 +138,7 @@ class EventListener implements Listener{
 						$cfg->set($type . ".y", $y);
 						$cfg->set($type . ".z", $z);
 						$cfg->save();
-						$player->sendMessage(TextFormat::DARK_GREEN . "Crate successfully placed. Restart the server to add floating text.");
+						$player->sendMessage(Lang::$crate_place_successful);
 					}
 				}
 			}
@@ -150,7 +151,7 @@ class EventListener implements Listener{
 	 */
 	public function onInteract(PlayerInteractEvent $event){
 		$levelName = $this->plugin->getConfig()->get("crateWorld");
-		$lev =$this->plugin->getServer()->getLevelByName($levelName);
+		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		$b = $block->getLevel()->getBlock($block->subtract(0, 1));
@@ -159,16 +160,16 @@ class EventListener implements Listener{
 			if($block->getId() == Block::CHEST && ($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())) !== false){
 				if(!$player->hasPermission("mc.crates.use")){
 					$event->setCancelled();
-					$player->sendMessage(TextFormat::RED . "You do not have permission to use a crate.");
+					$player->sendMessage(Lang::$no_perm_use_crate);
 					return;
 				}else{
 					if(!($keytype = $this->plugin->isCrateKey($item)) || $keytype !== $type){
 						$event->setCancelled();
-						$player->sendMessage(TextFormat::RED . "You require a " . ucfirst($type) . " key to open this crate.");
+						$player->sendMessage(str_replace(["%TYPE%"], [ucfirst($type)], Lang::$no_key));
 						return;
 					}elseif($player->isSneaking()){
 						$event->setCancelled();
-						$player->sendMessage(TextFormat::RED . "Crate cannot open because you are sneaking.");
+						$player->sendMessage(Lang::$error_sneak);
 						return;
 					}
 					if($this->plugin->isNotInUse()){
@@ -200,7 +201,7 @@ class EventListener implements Listener{
 						}
 					}else{
 						$event->setCancelled(true);
-						$player->sendMessage(TextFormat::RED . "The crate is in use. Please wait...");
+						$player->sendMessage(Lang::$error_crate_in_use);
 						return;
 					}
 				}
