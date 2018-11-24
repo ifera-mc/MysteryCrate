@@ -89,7 +89,7 @@ class Main extends PluginBase{
 		$this->initTextParticle();
 		$this->setNotInUse(true);
 		$this->key = $this->getConfig()->getNested("key");
-		$this->getServer()->getCommandMap()->register("key", new KeyCommand("key", $this), "key");
+		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand("key", $this));
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$this->getLogger()->info("Plugin Enabled.");
 	}
