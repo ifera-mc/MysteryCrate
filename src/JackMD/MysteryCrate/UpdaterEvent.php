@@ -53,11 +53,11 @@ use pocketmine\tile\Chest as ChestTile;
 
 class UpdaterEvent extends Task{
 
-	public $canTakeItem = false;
-	public $t_delay = 2 * 20;
-	public $main, $level, $plugin, $item, $player, $chest;
+	private $canTakeItem = false;
+	private $t_delay = 2 * 20;
+	private $plugin, $player, $chest;
 	/** @var ChestBlock */
-	public $block;
+	private $block;
 
 	/**
 	 * UpdaterEvent constructor.
@@ -68,13 +68,17 @@ class UpdaterEvent extends Task{
 		$this->plugin = $plugin;
 	}
 
+	/**
+	 * @param int $timer
+	 */
 	public function onRun(int $timer){
 		$t_delay = $this->getTDelay();
 		$chestTile = $this->chest;
-		if(is_null($chestTile)){
+		$player = $this->player;
+		if((is_null($chestTile)) || (is_null($player))){
 			return;
 		}
-		if($chestTile instanceof ChestTile){
+		if(($chestTile instanceof ChestTile) && ($player instanceof Player) && ($player->isOnline())){
 			$this->setTDelay(--$t_delay);
 			if($t_delay >= 0){
 				$i = 0;
@@ -87,7 +91,7 @@ class UpdaterEvent extends Task{
 				$this->setItemINT(4, 208, 1);
 				$this->setItemINT(22, 208, 1);
 				$block = $this->block;
-				$block->getLevel()->addSound(new ClickSound($block), [$this->player]);
+				$block->getLevel()->addSound(new ClickSound($block), [$player]);
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
 				$drops = array_rand($this->plugin->getCrateDrops($type), 1);
@@ -119,7 +123,7 @@ class UpdaterEvent extends Task{
 					if(isset($values["commands"])){
 						foreach($values["commands"] as $index => $cmd){
 							$nbt = $i->getNamedTag() ?? new CompoundTag("", []);
-							$cmd = str_replace(["%PLAYER%"], [$this->player->getName()], $cmd);
+							$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
 							$nbt->setString($index, $cmd);
 							$i->setNamedTag($nbt);
 						}
@@ -146,7 +150,7 @@ class UpdaterEvent extends Task{
 				$block = $this->block;
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
-				if($this->player instanceof Player){
+				if($player->isOnline()){
 					if($slot13->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
 						$nbt = $slot13->getNamedTag();
 						for($i = 0; $i < $this->plugin->getConfig()->get("maxCommands"); $i++){
@@ -156,13 +160,13 @@ class UpdaterEvent extends Task{
 							}
 						}
 					}else{
-						$this->player->getInventory()->addItem($slot13);
+						$player->getInventory()->addItem($slot13);
 						$win_message = str_replace(["%REWARD%", "%COUNT%", "%CRATE%"], [
 							$slot13->getName(),
 							$slot13->getCount(),
 							ucfirst($type)
 						], Lang::$win_message);
-						$this->player->sendMessage($win_message);
+						$player->sendMessage($win_message);
 					}
 				}
 				$dmg = $block->getDamage();
