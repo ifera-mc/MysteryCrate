@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * ___  ___          _                  _____           _
