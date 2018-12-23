@@ -244,12 +244,12 @@ class Main extends PluginBase{
 
 	/**
 	 * @param Item $item
-	 * @return bool
+	 * @return bool|string
 	 */
-	public function isCrateKey(Item $item): bool{
+	public function isCrateKey(Item $item){
 		$values = explode(":", $this->getConfig()->getNested("key"));
 
-		return ($values[0] === $item->getId() && $values[1] === $item->getDamage() && !is_null($keyType = $item->getNamedTagEntry("KeyType"))) ? $keyType->getValue() : false;
+		return ((int) $values[0] === $item->getId()) && ((int) $values[1] === $item->getDamage()) && (!is_null($keyType = $item->getNamedTagEntry("KeyType"))) ? $keyType->getValue() : false;
 	}
 
 	/**

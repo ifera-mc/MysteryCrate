@@ -67,7 +67,7 @@ class KeyCommand extends PluginCommand{
 		$plugin = $this->getPlugin();
 		if($plugin instanceof Main){
 			if(!isset($args[0])){
-				$sender->sendMessage("Usage: /key [type] [player] [amount]");
+				$sender->sendMessage(TextFormat::RED . "Usage: /key [type] [player] [amount]");
 				return true;
 			}
 			$target = $sender;

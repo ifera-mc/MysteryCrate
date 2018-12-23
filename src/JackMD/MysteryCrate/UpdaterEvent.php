@@ -82,7 +82,7 @@ class UpdaterEvent extends Task{
 			return;
 		}
 		if(($chestTile instanceof ChestTile) && ($player instanceof Player) && ($player->isOnline())){
-			$this->t_delay--;//todo t delay check
+			$this->t_delay--;
 			if($t_delay >= 0){
 				$i = 0;
 				while($i < 27){
@@ -127,7 +127,7 @@ class UpdaterEvent extends Task{
 						foreach($values["commands"] as $index => $cmd){
 							$nbt = $i->getNamedTag() ?? new CompoundTag("", []);
 							$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
-							$nbt->setString($index, $cmd);
+							$nbt->setString((string) $index, $cmd);
 							$i->setNamedTag($nbt);
 						}
 					}
