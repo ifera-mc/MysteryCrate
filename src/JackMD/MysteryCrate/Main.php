@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * ___  ___          _                  _____           _
@@ -58,15 +59,16 @@ use pocketmine\utils\TextFormat;
  * @package MysteryCrate
  */
 class Main extends PluginBase{
-	
-	public $notInUse = false;
+
+	private $notInUse = false;
 	/** @var UpdaterEvent */
-	public $task;
-	public $crates, $crateDrops, $crateBlocks;
+	private $task;
+
+	private $crates, $crateDrops, $crateBlocks;
 	/** @var FloatingTextParticle[] */
-	public $textParticles;
+	private $textParticles;
 	/** @var Config */
-	public $blocks;
+	private $blocks;
 	private $key;
 	
 	public function onEnable(): void{
