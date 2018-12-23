@@ -5,4 +5,7 @@ projects:
   MysteryCrate:
     path: ""
     icon: meta/MysteryCrate.png
+    libs:
+      - src: JackMD/UpdateNotifier/UpdateNotifier
+        version: ^1.0.0
 ...
