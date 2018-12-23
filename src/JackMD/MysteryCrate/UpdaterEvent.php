@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * ___  ___          _                  _____           _
@@ -53,9 +54,16 @@ use pocketmine\tile\Chest as ChestTile;
 
 class UpdaterEvent extends Task{
 
+	/** @var Main */
+	private $plugin;
+	/** @var bool */
 	private $canTakeItem = false;
+	/** @var float|int */
 	private $t_delay = 2 * 20;
-	private $plugin, $player, $chest;
+	/** @var Player */
+	private $player;
+	/** @var ChestTile */
+	private  $chest;
 	/** @var ChestBlock */
 	private $block;
 
