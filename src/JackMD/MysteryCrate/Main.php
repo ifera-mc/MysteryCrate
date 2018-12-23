@@ -236,7 +236,7 @@ class Main extends PluginBase{
 	/**
 	 * @param int $id
 	 * @param int $meta
-	 * @return bool|array
+	 * @return bool|string
 	 */
 	public function isCrateBlock(int $id, int $meta){
 		return isset($this->crateBlocks[$id . ":" . $meta]) ? $this->crateBlocks[$id . ":" . $meta] : false;

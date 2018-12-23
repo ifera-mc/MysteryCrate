@@ -162,8 +162,8 @@ class UpdaterEvent extends Task{
 					if($slot13->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
 						$nbt = $slot13->getNamedTag();
 						for($i = 0; $i < $this->plugin->getConfig()->get("maxCommands"); $i++){
-							if($nbt->hasTag($i, StringTag::class)){
-								$cmd = $nbt->getString($i);
+							if($nbt->hasTag((string) $i, StringTag::class)){
+								$cmd = $nbt->getString((string) $i);
 								$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), $cmd);
 							}
 						}
