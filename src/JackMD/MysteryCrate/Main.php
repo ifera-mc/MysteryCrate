@@ -43,6 +43,7 @@ use JackMD\MysteryCrate\Particles\Helix;
 use JackMD\MysteryCrate\Particles\Ting;
 use JackMD\MysteryCrate\Utils\Lang;
 use JackMD\MysteryCrate\Utils\ParticleType;
+use JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
@@ -69,12 +70,19 @@ class Main extends PluginBase{
 	/** @var Config */
 	private $blocksConfig;
 
-	public function onEnable(): void{
+	public function onLoad(){
+		$this->checkVirions();
+
 		Lang::init($this);
 
 		$this->saveDefaultConfig();
 		$this->initCrates();
+		$this->setNotInUse(true);
 
+		UpdateNotifier::checkUpdate($this, $this->getDescription()->getName(), $this->getDescription()->getVersion());
+	}
+
+	public function onEnable(): void{
 		if($this->getConfig()->get("showParticle") !== false){
 			if($this->getServer()->getLevelByName((string) $this->getConfig()->get("crateWorld")) !== null){
 				$this->initParticleShow();
@@ -84,11 +92,19 @@ class Main extends PluginBase{
 		}
 		$this->initTextParticle();
 
-		$this->setNotInUse(true);
 
 		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$this->getLogger()->info("Plugin Enabled.");
+	}
+
+	/**
+	 * Checks if the required virions/libraries are present before enabling the plugin.
+	 */
+	private function checkVirions(): void{
+		if(!class_exists(UpdateNotifier::class)){
+			throw new \RuntimeException("ScoreHud plugin will only work if you use the plugin phar from Poggit.");
+		}
 	}
 
 	public function initCrates(): void{
