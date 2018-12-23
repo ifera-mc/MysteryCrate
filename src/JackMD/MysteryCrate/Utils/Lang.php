@@ -39,23 +39,38 @@ use JackMD\MysteryCrate\Main;
 use pocketmine\utils\Config;
 
 class Lang{
-	
+
+	/** @var string */
 	public static $no_perm_destroy;
+	/** @var string */
 	public static $no_perm_create;
+	/** @var string */
 	public static $crate_destroy_successful;
+	/** @var string */
 	public static $crate_place_successful;
+	/** @var string */
 	public static $no_perm_use_crate;
+	/** @var string */
 	public static $no_key;
+	/** @var string */
 	public static $error_sneak;
+	/** @var string */
 	public static $error_crate_in_use;
+	/** @var string */
 	public static $win_message;
-	
+
+	/**
+	 * @param Main $plugin
+	 */
 	public static function init(Main $plugin){
 		$plugin->saveResource("lang.yml");
 		$lang = new Config($plugin->getDataFolder() . "lang.yml", Config::YAML);
 		self::loadMessages($lang);
 	}
-	
+
+	/**
+	 * @param Config $lang
+	 */
 	private static function loadMessages(Config $lang){
 		self::$no_perm_destroy = $lang->get("no_perm_destroy");
 		self::$no_perm_create = $lang->get("no_perm_create");
