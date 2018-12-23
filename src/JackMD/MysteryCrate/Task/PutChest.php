@@ -60,7 +60,7 @@ class PutChest extends Task{
 	 * @param int $tick
 	 */
 	public function onRun(int $tick){
-		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+		$level = $this->plugin->getServer()->getLevelByName((string) $this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->cpos;
 		$dmg = $this->dmg;
 		$level->setBlock($cpos, Block::get(54, $dmg));

@@ -40,7 +40,6 @@ use DaPigGuy\PiggyCustomEnchants\Main as CE;
 use JackMD\MysteryCrate\Task\PutChest;
 use JackMD\MysteryCrate\Task\RemoveChest;
 use JackMD\MysteryCrate\Utils\Lang;
-use pocketmine\block\Chest as ChestBlock;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
@@ -58,22 +57,18 @@ class UpdaterEvent extends Task{
 	private $plugin;
 	/** @var bool */
 	private $canTakeItem = false;
-	/** @var float|int */
+	/** @var int */
 	private $t_delay = 2 * 20;
 	/** @var Player */
 	private $player;
 	/** @var ChestTile */
-	private  $chest;
-	/** @var ChestBlock */
-	private $block;
+	private  $chestTile;
 
-	/**
-	 * UpdaterEvent constructor.
-	 *
-	 * @param Main $plugin
-	 */
-	public function __construct(Main $plugin){
+	public function __construct(Main $plugin, Player $player, ChestTile $chestTile, int $t_delay){
 		$this->plugin = $plugin;
+		$this->player = $player;
+		$this->chestTile = $chestTile;
+		$this->t_delay = $t_delay;
 	}
 
 	/**
@@ -81,13 +76,13 @@ class UpdaterEvent extends Task{
 	 */
 	public function onRun(int $timer){
 		$t_delay = $this->getTDelay();
-		$chestTile = $this->chest;
+		$chestTile = $this->chestTile;
 		$player = $this->player;
 		if((is_null($chestTile)) || (is_null($player))){
 			return;
 		}
 		if(($chestTile instanceof ChestTile) && ($player instanceof Player) && ($player->isOnline())){
-			$this->setTDelay(--$t_delay);
+			$this->t_delay--;//todo t delay check
 			if($t_delay >= 0){
 				$i = 0;
 				while($i < 27){
@@ -98,7 +93,7 @@ class UpdaterEvent extends Task{
 				}
 				$this->setItemINT(4, 208, 1);
 				$this->setItemINT(22, 208, 1);
-				$block = $this->block;
+				$block = $this->chestTile->getBlock();
 				$block->getLevel()->addSound(new ClickSound($block), [$player]);
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
@@ -155,7 +150,7 @@ class UpdaterEvent extends Task{
 				$this->setItemINT(16, 0, 1);
 				$this->setCanTakeItem(true);
 				$slot13 = $chestTile->getInventory()->getItem(13);
-				$block = $this->block;
+				$block = $this->chestTile->getBlock();
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
 				if($player->isOnline()){
@@ -193,13 +188,6 @@ class UpdaterEvent extends Task{
 	}
 
 	/**
-	 * @param int $t_delay
-	 */
-	public function setTDelay(int $t_delay){
-		$this->t_delay = $t_delay;
-	}
-
-	/**
 	 * @param     $index
 	 * @param int $id
 	 * @param     $count
@@ -209,8 +197,10 @@ class UpdaterEvent extends Task{
 		$item = Item::get($id);
 		$item->setCount($count);
 		$item->setDamage($dmg);
-		if($this->chest instanceof ChestTile){
-			$this->chest->getInventory()->setItem($index, $item);
+
+		$chestTile = $this->chestTile;
+		if($chestTile instanceof ChestTile){
+			$chestTile->getInventory()->setItem($index, $item);
 		}
 	}
 
@@ -223,8 +213,10 @@ class UpdaterEvent extends Task{
 	public function setItem($index, Item $item, $count, $dmg = 0){
 		$item->setCount($count);
 		$item->setDamage($dmg);
-		if($this->chest instanceof ChestTile){
-			$this->chest->getInventory()->setItem($index, $item);
+
+		$chestTile = $this->chestTile;
+		if($chestTile instanceof ChestTile){
+			$chestTile->getInventory()->setItem($index, $item);
 		}
 	}
 

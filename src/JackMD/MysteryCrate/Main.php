@@ -86,7 +86,7 @@ class Main extends PluginBase{
 
 		$this->setNotInUse(true);
 
-		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand("key", $this));
+		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$this->getLogger()->info("Plugin Enabled.");
 	}
@@ -275,5 +275,19 @@ class Main extends PluginBase{
 		$player->getInventory()->addItem($key);
 
 		return true;
+	}
+
+	/**
+	 * @return Config
+	 */
+	public function getBlocksConfig(): Config{
+		return $this->blocksConfig;
+	}
+
+	/**
+	 * @return FloatingTextParticle[]
+	 */
+	public function getTextParticles(): array{
+		return $this->textParticles;
 	}
 }

@@ -52,7 +52,11 @@ use pocketmine\tile\Chest as ChestTile;
 use pocketmine\utils\TextFormat;
 
 class EventListener implements Listener{
-	public $plugin;
+
+	/** @var Main */
+	private $plugin;
+	/** @var UpdaterEvent */
+	private $updaterTask;
 	
 	/**
 	 * EventListener constructor.
@@ -87,15 +91,15 @@ class EventListener implements Listener{
 			if($block->getId() == Block::CHEST){
 				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 				if($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
-					$cfg = $this->plugin->blocks;
-					if(!empty($cfg->get($type))){
-						$cfg->remove($type);
-						$cfg->remove($type . ".x");
-						$cfg->remove($type . ".y");
-						$cfg->remove($type . ".z");
-						$cfg->save();
-						if(isset($this->plugin->textParticles[$type])){
-							unset($this->plugin->textParticles[$type]);
+					$config = $this->plugin->getBlocksConfig();
+					if(!empty($config->get($type))){
+						$config->remove($type);
+						$config->remove($type . ".x");
+						$config->remove($type . ".y");
+						$config->remove($type . ".z");
+						$config->save();
+						if(isset($this->plugin->getTextParticles()[$type])){
+							unset($this->plugin->getTextParticles()[$type]);
 							$this->plugin->initTextParticle();
 						}
 						$player->sendMessage(Lang::$crate_destroy_successful);
@@ -132,13 +136,13 @@ class EventListener implements Listener{
 					$x = $block->getX();
 					$y = $block->getY();
 					$z = $block->getZ();
-					$cfg = $this->plugin->blocks;
-					if(empty($cfg->get($type))){
-						$cfg->set($type, TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " Crate");
-						$cfg->set($type . ".x", $x);
-						$cfg->set($type . ".y", $y);
-						$cfg->set($type . ".z", $z);
-						$cfg->save();
+					$config = $this->plugin->getBlocksConfig();
+					if(empty($config->get($type))){
+						$config->set($type, TextFormat::GOLD . ucfirst($type) . TextFormat::GREEN . " Crate");
+						$config->set($type . ".x", $x);
+						$config->set($type . ".y", $y);
+						$config->set($type . ".z", $z);
+						$config->save();
 						$player->sendMessage(Lang::$crate_place_successful);
 					}
 				}
@@ -151,14 +155,14 @@ class EventListener implements Listener{
 	 * @priority        HIGHEST
 	 */
 	public function onInteract(PlayerInteractEvent $event){
-		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$levelName = (string) $this->plugin->getConfig()->get("crateWorld");
 		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 		$item = $event->getItem();
 		if($player->getLevel() === $lev){
-			if($block->getId() == Block::CHEST && ($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())) !== false){
+			if(($block->getId() == Block::CHEST) && ($type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage())) !== false){
 				if(!$player->hasPermission("mc.crates.use")){
 					$event->setCancelled();
 					$player->sendMessage(Lang::$no_perm_use_crate);
@@ -176,18 +180,17 @@ class EventListener implements Listener{
 					if($this->plugin->isNotInUse()){
 						$event->setCancelled(false);
 						$this->plugin->setNotInUse(false);
-						$chest = $event->getPlayer()->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));;
-						if($chest instanceof ChestTile){
-							$this->plugin->task->block = $block;
-							$chest->getInventory()->clearAll();
-							$this->plugin->task->chest = $chest;
-							$this->plugin->task->player = $player;
-							$this->plugin->task->setTDelay($this->plugin->getConfig()->get("tickDelay") * 20);
+						$chestTile = $player->getLevel()->getTile(new Vector3($event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ()));;
+						if($chestTile instanceof ChestTile){
+							$chestTile->getInventory()->clearAll();
+							$t_delay = $this->plugin->getConfig()->get("tickDelay") * 20;
+							$this->updaterTask = $updaterTask = new UpdaterEvent($this->plugin, $player, $chestTile, $t_delay);
 							$item = $player->getInventory()->getItemInHand();
 							$item->setCount($item->getCount() - 1);
 							$item->setDamage($item->getDamage());
-							$event->getPlayer()->getInventory()->setItemInHand($item);
-							$this->plugin->getScheduler()->scheduleRepeatingTask($this->plugin->task, 5);
+							$player->getInventory()->setItemInHand($item);
+							$this->plugin->getScheduler()->scheduleRepeatingTask($updaterTask, 5);
+
 							//Particle upon opening chest
 							$cx = $block->getX() + 0.5;
 							$cy = $block->getY() + 1.2;
@@ -215,7 +218,7 @@ class EventListener implements Listener{
 	 * @priority        HIGHEST
 	 */
 	public function onTransaction(InventoryTransactionEvent $event){
-		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$levelName = (string) $this->plugin->getConfig()->get("crateWorld");
 		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$player = $event->getTransaction()->getSource();
 		if($player->getLevel() === $lev){
@@ -241,7 +244,7 @@ class EventListener implements Listener{
 	 * @param InventoryCloseEvent $event
 	 */
 	public function onInventoryClose(InventoryCloseEvent $event){
-		$levelName = $this->plugin->getConfig()->get("crateWorld");
+		$levelName = (string) $this->plugin->getConfig()->get("crateWorld");
 		$lev = $this->plugin->getServer()->getLevelByName($levelName);
 		$che = $event->getInventory();
 		$player = $event->getPlayer();
@@ -253,7 +256,7 @@ class EventListener implements Listener{
 					$b = $block->getLevel()->getBlock($block->subtract(0, 1));
 					if($this->plugin->isCrateBlock($b->getId(), $b->getDamage())){
 						$this->plugin->setNotInUse(true);
-						$this->plugin->getScheduler()->cancelTask($this->plugin->task->getTaskId());
+						$this->plugin->getScheduler()->cancelTask($this->updaterTask->getTaskId());
 					}
 				}
 			}

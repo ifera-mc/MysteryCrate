@@ -41,15 +41,14 @@ use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
 class KeyCommand extends PluginCommand{
-	
+
 	/**
 	 * KeyCommand constructor.
 	 *
-	 * @param string $name
-	 * @param Main   $plugin
+	 * @param Main $plugin
 	 */
-	public function __construct(string $name, Main $plugin){
-		parent::__construct($name, $plugin);
+	public function __construct(Main $plugin){
+		parent::__construct("key", $plugin);
 		$this->setDescription("Give a crate key to a player.");
 		$this->setUsage("/key [type] [player] [amount]");
 		$this->setPermission("mc.command.key");

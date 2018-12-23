@@ -41,9 +41,18 @@ use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 
 class CloudRain extends Task{
-	
-	private $plugin, $pos;
-	
+
+	/** @var Main */
+	private $plugin;
+	/** @var Vector3 */
+	private $pos;
+
+	/**
+	 * CloudRain constructor.
+	 *
+	 * @param Main    $plugin
+	 * @param Vector3 $pos
+	 */
 	public function __construct(Main $plugin, Vector3 $pos){
 		$this->plugin = $plugin;
 		$this->pos = $pos;
@@ -53,7 +62,7 @@ class CloudRain extends Task{
 	 * @param int $tick
 	 */
 	public function onRun(int $tick){
-		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+		$level = $this->plugin->getServer()->getLevelByName((string) $this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->pos;
 		$time = 1;
 		$pi = 3.14159;

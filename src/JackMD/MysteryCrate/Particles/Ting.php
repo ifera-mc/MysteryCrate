@@ -40,16 +40,28 @@ use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 
 class Ting extends Task{
-	
-	private $plugin, $pos;
-	
+
+	/** @var Main */
+	private $plugin;
+	/** @var Vector3 */
+	private $pos;
+
+	/**
+	 * Ting constructor.
+	 *
+	 * @param Main    $plugin
+	 * @param Vector3 $pos
+	 */
 	public function __construct(Main $plugin, Vector3 $pos){
 		$this->plugin = $plugin;
 		$this->pos = $pos;
 	}
-	
+
+	/**
+	 * @param int $tick
+	 */
 	public function onRun(int $tick){
-		$level = $this->plugin->getServer()->getLevelByName($this->plugin->getConfig()->get("crateWorld"));
+		$level = $this->plugin->getServer()->getLevelByName((string) $this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->pos;
         $time = 0;
         $pi = 3.14159;
