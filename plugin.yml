@@ -1,11 +1,11 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
 api: [3.0.0]
-version: 7.0.0
+version: 8.0.0
 author: JackMD
 authors: [DaPigGuy]
 load: POSTWORLD
-description: This plugins adds MysteryCrates with op items.
+description: Add unlimited number of MysteryCrates with full customization.
 website: https://github.com/JackMD/MysteryCrate
 
 permissions:
