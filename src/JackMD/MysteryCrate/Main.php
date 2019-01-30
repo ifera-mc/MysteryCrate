@@ -127,8 +127,6 @@ class Main extends PluginBase{
 			$this->saveResource("crates.yml");
 			$this->getLogger()->critical("Your crates.yml file is outdated.");
 			$this->getLogger()->notice("Your old crates.yml has been saved as crates_old.yml and a new crates.yml file has been generated. Please update accordingly.");
-
-			return;
 		}
 
 		$config = $this->getConfig();
@@ -137,8 +135,6 @@ class Main extends PluginBase{
 			$this->saveResource("config.yml");
 			$this->getLogger()->critical("Your config.yml file is outdated.");
 			$this->getLogger()->notice("Your old config.yml has been saved as config_old.yml and a new config.yml file has been generated. Please update accordingly.");
-
-			return;
 		}
 	}
 
