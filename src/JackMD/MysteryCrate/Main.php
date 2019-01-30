@@ -143,13 +143,7 @@ class Main extends PluginBase{
 	}
 
 	public function onEnable(): void{
-		if($this->getConfig()->get("showParticle") !== false){
-			if($this->getServer()->getLevelByName((string) $this->getConfig()->get("crateWorld")) !== null){
-				$this->initParticleShow();
-			}else{
-				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
-			}
-		}
+		$this->initParticles();
 		$this->initTextParticle();
 
 		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
@@ -157,7 +151,21 @@ class Main extends PluginBase{
 		$this->getLogger()->info("Plugin Enabled.");
 	}
 
-	public function initParticleShow(){
+	private function initParticles(): void{
+		if($this->getConfig()->get("showParticle")){
+			$crateWorld = (string) $this->getConfig()->get("crateWorld");
+			if(!$this->getServer()->isLevelLoaded($crateWorld)){
+				$this->getServer()->loadLevel($crateWorld);
+			}
+			if($this->getServer()->getLevelByName($crateWorld) !== null){
+				$this->initParticleShow();
+			}else{
+				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml. Or make sure that the world exists and is loaded.");
+			}
+		}
+	}
+
+	private function initParticleShow(): void{
 		$blocksConfig = $this->blocksConfig;
 		$types = $this->getCrateTypes();
 		$particleType = (string) $this->getConfig()->get("particleType");
@@ -199,14 +207,7 @@ class Main extends PluginBase{
 		}
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getCrateTypes(): array{
-		return array_keys($this->crates);
-	}
-
-	public function initTextParticle(): void{
+	private function initTextParticle(): void{
 		$blocksConfig = $this->blocksConfig;
 		$types = $this->getCrateTypes();
 
@@ -221,6 +222,13 @@ class Main extends PluginBase{
 				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
 			}
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCrateTypes(): array{
+		return array_keys($this->crates);
 	}
 
 	/**

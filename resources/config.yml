@@ -42,7 +42,7 @@ lore: "Use this key at /warp crates.\nWin OP stuff."
 
 # Enter the name of the FOLDER of the world in which crate is located.
 # Example if your world name is spawn but folder name is spw then enter spw in crateWorld
-crateWorld: "Master"
+crateWorld: "world"
 
 # Set the value you want the command to be recognized with. Make sure its in between 10-50
 # If you want to reward the player with a command, set the meta of the reward in the crates.yml
