@@ -102,9 +102,11 @@ class UpdaterEvent extends Task{
 					$drops = [$drops];
 				}
 				foreach($drops as $drop){
-					$values = $this->plugin->getCrateDrops($type)[$drop];;
+					$values = $this->plugin->getCrateDrops($type)[$drop];
 					$i = Item::get(($values["id"]), $values["meta"], $values["amount"]);
-					$i->setCustomName($values["name"]);
+					if(isset($values["name"])){
+						$i->setCustomName($values["name"]);
+					}
 					if(isset($values["enchantments"])){
 						foreach($values["enchantments"] as $enchantment => $enchantmentinfo){
 							$level = $enchantmentinfo["level"];

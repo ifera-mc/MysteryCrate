@@ -42,8 +42,7 @@ crates:
           protection:
             level: 3
         lore: "OP Sword\nFire Blade"
-      - name: "Cooked Chicken"
-        id: 366
+      - id: 366
         meta: 0
         amount: 16
     block: "173:0"
@@ -56,49 +55,40 @@ crates:
         commands:
         - "givemoney \"%PLAYER%\" 100000"
         - "say \"%PLAYER%\" won $100,000."
-      - name: "Iron Ingot"
-        id: 265
+      - id: 265
         meta: 0
         amount: 10
     block: "42:0"
   vote:
     drops:
-      - name: "Iron Ingot"
-        id: 265
+      - id: 265
         meta: 0
         amount: 10
-      - name: "Gold Ingot"
-        id: 266
+      - id: 266
         meta: 0
         amount: 10
-      - name: "Oak Wood"
-        id: 17
+      - id: 17
         meta: 0
         amount: 64
     block: "41:0"
   mythic:
     drops:
-      - name: "Diamond"
-        id: 264
+      - id: 264
         meta: 0
         amount: 16
-      - name: "Emerald"
-        id: 388
+      -id: 388
         meta: 0
         amount: 16
-      - name: "Golden Apple"
-        id: 322
+      - id: 322
         meta: 0
         amount: 16
     block: "57:0"
   legendary:
     drops:
-      - name: "Golden Apple"
-        id: 322
+      - id: 322
         meta: 0
         amount: 16
-      - name: "Emerald"
-        id: 388
+      - id: 388
         meta: 0
         amount: 16
     block: "133:0"
