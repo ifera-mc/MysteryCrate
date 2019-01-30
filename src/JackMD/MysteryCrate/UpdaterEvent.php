@@ -103,6 +103,12 @@ class UpdaterEvent extends Task{
 				}
 				foreach($drops as $drop){
 					$values = $this->plugin->getCrateDrops($type)[$drop];
+					if(!isset($values["id"]) || !isset($values["meta"]) || !isset($values["amount"])){
+						$this->player->kick("§cMysteryCrate caught fire!\nPlease report to Admin to look for error on console.", false);
+						$this->plugin->getLogger()->error("Either `id` or `meta` or `amount` key is missing in " . ucfirst($type) . " Crate.");
+						$this->plugin->getServer()->getPluginManager()->disablePlugin($this->plugin);
+						break;
+					}
 					$i = Item::get(($values["id"]), $values["meta"], $values["amount"]);
 					if(isset($values["name"])){
 						$i->setCustomName($values["name"]);
