@@ -14,7 +14,7 @@ crates-version: 1
 # - The headings/keys marked with (OPTIONAL) means that you don't need to add them. The item will work just fine even if its not there.
 crates:
 # EXAMPLE CONFIGURATION.
-#-------------------------
+# ------------------------
 # crate-name:            | Set the name of the crate.
 #  drops:                | List the items that can be received from the crate.
 #   - name: "G-Helmet"   | Custom name for the item. (OPTIONAL).
@@ -32,6 +32,7 @@ crates:
 #     - "say test"       | Don't forget to mention the maxCommands in config.yml.
 #  block: "911:0"        | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
 # ------------------------
+
   common:
     drops:
       - name: "§a§lG Sword§r"
@@ -53,8 +54,8 @@ crates:
         meta: 50
         amount: 1
         commands:
-        - "givemoney \"%PLAYER%\" 100000"
-        - "say \"%PLAYER%\" won $100,000."
+          - "givemoney \"%PLAYER%\" 100000"
+          - "say \"%PLAYER%\" won $100,000."
       - id: 265
         meta: 0
         amount: 10
@@ -76,7 +77,7 @@ crates:
       - id: 264
         meta: 0
         amount: 16
-      -id: 388
+      - id: 388
         meta: 0
         amount: 16
       - id: 322
