@@ -117,7 +117,7 @@ class Main extends PluginBase{
 	private function checkConfigs(): void{
 		$cratesConfig = new Config($this->getDataFolder() . "crates.yml", Config::YAML);
 		if((!$cratesConfig->exists("crates-version")) || ($cratesConfig->get("crates-version") !== self::CRATES_VERSION)){
-			rename($this->getDataFolder() . "crates.yml", $this->getDataFolder() . "crates.yml");
+			rename($this->getDataFolder() . "crates.yml", $this->getDataFolder() . "crates_old.yml");
 			$this->saveResource("crates.yml");
 			$this->getLogger()->critical("Your crates.yml file is outdated.");
 			$this->getLogger()->notice("Your old crates.yml has been saved as crates_old.yml and a new crates.yml file has been generated. Please update accordingly.");
