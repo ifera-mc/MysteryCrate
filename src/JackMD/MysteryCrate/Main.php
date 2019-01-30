@@ -207,23 +207,6 @@ class Main extends PluginBase{
 		}
 	}
 
-	private function initTextParticle(): void{
-		$blocksConfig = $this->blocksConfig;
-		$types = $this->getCrateTypes();
-
-		foreach($types as $type){
-			$text = $blocksConfig->get($type);
-			$x = $blocksConfig->get($type . ".x");
-			$y = $blocksConfig->get($type . ".y");
-			$z = $blocksConfig->get($type . ".z");
-
-			if(!empty($x)){
-				$pos = new Vector3($x + 0.5, $y + 1, $z + 0.5);
-				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
-			}
-		}
-	}
-
 	/**
 	 * @return array
 	 */
@@ -244,6 +227,23 @@ class Main extends PluginBase{
 						$player->dataPacket($packet);
 					}
 				}
+			}
+		}
+	}
+
+	public function initTextParticle(): void{
+		$blocksConfig = $this->blocksConfig;
+		$types = $this->getCrateTypes();
+
+		foreach($types as $type){
+			$text = $blocksConfig->get($type);
+			$x = $blocksConfig->get($type . ".x");
+			$y = $blocksConfig->get($type . ".y");
+			$z = $blocksConfig->get($type . ".z");
+
+			if(!empty($x)){
+				$pos = new Vector3($x + 0.5, $y + 1, $z + 0.5);
+				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
 			}
 		}
 	}

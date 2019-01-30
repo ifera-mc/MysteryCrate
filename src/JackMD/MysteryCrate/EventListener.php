@@ -40,6 +40,7 @@ use pocketmine\block\Block;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -47,6 +48,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\level\particle\LavaParticle;
 use pocketmine\math\Vector3;
 use pocketmine\tile\Chest as ChestTile;
@@ -218,7 +220,31 @@ class EventListener implements Listener{
 			}
 		}
 	}
-	
+
+	/**
+	 * @param EntityLevelChangeEvent $event
+	 */
+	public function onLevelChange(EntityLevelChangeEvent $event){
+		$targetLevel = $event->getTarget();
+		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
+		if(!empty($this->plugin->getTextParticles())){
+			$particles = $this->plugin->getTextParticles();
+			foreach($particles as $particle){
+				if($particle instanceof FloatingTextParticle){
+					if($targetLevel->getFolderName() === $crateLevel){
+						$particle->setInvisible(false);
+						$lev = $event->getTarget();
+						$lev->addParticle($particle, [$event->getEntity()]);
+					}else{
+						$particle->setInvisible(true);
+						$lev = $event->getOrigin();
+						$lev->addParticle($particle, [$event->getEntity()]);
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * @param InventoryTransactionEvent $event
 	 * @priority        HIGHEST
