@@ -29,6 +29,10 @@
 # <https://opensource.org/licenses/GPL-3.0>.
 #  -----------------------------------------------------------------------
 
+# DO NOT EDIT THIS VALUE.
+# ONLY FOR INTERNAL USE.
+config-version: 1
+
 # The ID:META of the key you want to use for opening crates.
 # Its better not to edit this value unless you can edit the source code.
 key: "339:0"

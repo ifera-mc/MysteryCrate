@@ -1,34 +1,37 @@
 ---
-crates:
-# HUGE THANKS TO @DaPigGuy and his PiggyCrates plugin for making multiple crates possible.
-#
-# Disclaimer: Some part of this code has been taken from @DaPigGuy's plugin,
-# I have asked his permission to use his code as a reference before hand as to avoid
-# unnecessary complains and/or contradictions.
-#
+# DO NOT EDIT THIS VALUE.
+# ONLY FOR INTERNAL USE.
+crates-version: 1
+
+# IMPORTANT NOTE:
 # To reward the player with a command make sure that the meta of the reward is same as
 # commandMeta set in config.yml or else the command won't work.
 #
-# Example on how to set the config.
-# Note: Please use tabs instead of spaces.
-#-------------------------------------------------------------------------------------------------------------------------------
-# example:               | Set the name of the crate.
+# Note(s):
+# - Please use tabs instead of spaces.
+# - You can add infinite many crates to your server just follow the example below.
+# - Use "§" for adding colors.
+# - The headings/keys marked with (OPTIONAL) means that you don't need to add them. The item will work just fine even if its not there.
+crates:
+# EXAMPLE CONFIGURATION.
+#-------------------------
+# crate-name:            | Set the name of the crate.
 #  drops:                | List the items that can be received from the crate.
-#   - name: "G-Helmet"   | Custom name for the item. Use "§" for adding colors.
+#   - name: "G-Helmet"   | Custom name for the item. (OPTIONAL).
 #     id: 1              | ID of the reward.
 #     meta: 0            | Meta or Damage value of the Item.
 #     amount: 1          | The amount of Item that player receives.
-#     enchantments:      | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported.
+#     enchantments:      | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported. (OPTIONAL).
 #       protection:      | Name of enchant you wish to apply.
 #         level: 3       | The level for enchant.
 #       unbreaking:      | You can set multiple enchants as long as they are registered.
-#         level: 2       | NOTE: If you donot want enchants simply remove the enchantments heading.
-#     lore: "USE ME"     | Add a custom lore to the reward. Use "\n" for next line.
-#     commands:          | Add commands to execute when player wins a reward. Multiple commands supported.
+#         level: 2       | NOTE: If you don't want enchants simply remove the enchantments heading.
+#     lore: "USE ME"     | Add a custom lore to the reward. Use "\n" for next line. (OPTIONAL).
+#     commands:          | Add commands to execute when player wins a reward. Multiple commands supported. (OPTIONAL).
 #     - "say hi"         | Use \"%PLAYER%\" to insert player name (with the quotes and slash).
 #     - "say test"       | Don't forget to mention the maxCommands in config.yml.
 #  block: "911:0"        | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
-# ------------------------------------------------------------------------------------------------------------------------------
+# ------------------------
   common:
     drops:
       - name: "§a§lG Sword§r"
@@ -99,4 +102,8 @@ crates:
         meta: 0
         amount: 16
     block: "133:0"
+
+# ---------------------------------------------------------
+# YOU CAN ADD MORE CRATES BELOW. JUST FOLLOW THE PATTERN.
+# ---------------------------------------------------------
 ...

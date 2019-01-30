@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * ___  ___          _                  _____           _
@@ -57,6 +57,12 @@ use pocketmine\utils\TextFormat;
 
 class Main extends PluginBase{
 
+	/** @var int */
+	private const CRATES_VERSION = 1;
+
+	/** @var int */
+	private const CONFIG_VERSION = 1;
+
 	/** @var bool */
 	private $notInUse = false;
 	/** @var array */
@@ -70,32 +76,17 @@ class Main extends PluginBase{
 	/** @var Config */
 	private $blocksConfig;
 
-	public function onLoad(){
+	public function onLoad(): void{
 		$this->checkVirions();
 
 		Lang::init($this);
 
 		$this->saveDefaultConfig();
 		$this->initCrates();
+		$this->checkConfigs();
 		$this->setNotInUse(true);
 
 		UpdateNotifier::checkUpdate($this, $this->getDescription()->getName(), $this->getDescription()->getVersion());
-	}
-
-	public function onEnable(): void{
-		if($this->getConfig()->get("showParticle") !== false){
-			if($this->getServer()->getLevelByName((string) $this->getConfig()->get("crateWorld")) !== null){
-				$this->initParticleShow();
-			}else{
-				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
-			}
-		}
-		$this->initTextParticle();
-
-
-		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
-		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
-		$this->getLogger()->info("Plugin Enabled.");
 	}
 
 	/**
@@ -103,7 +94,7 @@ class Main extends PluginBase{
 	 */
 	private function checkVirions(): void{
 		if(!class_exists(UpdateNotifier::class)){
-			throw new \RuntimeException("ScoreHud plugin will only work if you use the plugin phar from Poggit.");
+			throw new \RuntimeException("MysteryCrate plugin will only work if you use the plugin phar from Poggit.");
 		}
 	}
 
@@ -118,6 +109,46 @@ class Main extends PluginBase{
 			$this->crateDrops[$type] = $values["drops"];
 			$this->crateBlocks[$values["block"]] = $type;
 		}
+	}
+
+	/**
+	 * Check if the configs are up-to-date.
+	 */
+	private function checkConfigs(): void{
+		$cratesConfig = new Config($this->getDataFolder() . "crates.yml", Config::YAML);
+		if((!$cratesConfig->exists("crates-version")) || ($cratesConfig->get("crates-version") !== self::CRATES_VERSION)){
+			rename($this->getDataFolder() . "crates.yml", $this->getDataFolder() . "crates.yml");
+			$this->saveResource("crates.yml");
+			$this->getLogger()->critical("Your crates.yml file is outdated.");
+			$this->getLogger()->notice("Your old crates.yml has been saved as crates_old.yml and a new crates.yml file has been generated. Please update accordingly.");
+
+			return;
+		}
+
+		$config = $this->getConfig();
+		if((!$config->exists("config-version")) || ($config->get("config-version") !== self::CONFIG_VERSION)){
+			rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
+			$this->saveResource("config.yml");
+			$this->getLogger()->critical("Your config.yml file is outdated.");
+			$this->getLogger()->notice("Your old config.yml has been saved as config_old.yml and a new config.yml file has been generated. Please update accordingly.");
+
+			return;
+		}
+	}
+
+	public function onEnable(): void{
+		if($this->getConfig()->get("showParticle") !== false){
+			if($this->getServer()->getLevelByName((string) $this->getConfig()->get("crateWorld")) !== null){
+				$this->initParticleShow();
+			}else{
+				$this->getServer()->getLogger()->critical("Please set the crateWorld in the config.yml");
+			}
+		}
+		$this->initTextParticle();
+
+		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
+		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+		$this->getLogger()->info("Plugin Enabled.");
 	}
 
 	public function initParticleShow(){
