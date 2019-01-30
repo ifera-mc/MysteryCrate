@@ -207,8 +207,10 @@ class UpdaterEvent extends Task{
 		$item->setDamage($dmg);
 
 		$chestTile = $this->chestTile;
-		if($chestTile instanceof ChestTile){
-			$chestTile->getInventory()->setItem($index, $item);
+		if(!is_null($chestTile) && ($chestTile instanceof ChestTile)){
+			if(!is_null($chestTile->getInventory())){
+				$chestTile->getInventory()->setItem($index, $item);
+			}
 		}
 	}
 
@@ -223,8 +225,10 @@ class UpdaterEvent extends Task{
 		$item->setDamage($dmg);
 
 		$chestTile = $this->chestTile;
-		if($chestTile instanceof ChestTile){
-			$chestTile->getInventory()->setItem($index, $item);
+		if(!is_null($chestTile) && ($chestTile instanceof ChestTile)){
+			if(!is_null($chestTile->getInventory())){
+				$chestTile->getInventory()->setItem($index, $item);
+			}
 		}
 	}
 
