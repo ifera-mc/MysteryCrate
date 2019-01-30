@@ -15,22 +15,25 @@ crates-version: 1
 crates:
 # EXAMPLE CONFIGURATION.
 # ------------------------
-# crate-name:            | Set the name of the crate.
-#  drops:                | List the items that can be received from the crate.
-#   - name: "G-Helmet"   | Custom name for the item. (OPTIONAL).
-#     id: 1              | ID of the reward.
-#     meta: 0            | Meta or Damage value of the Item.
-#     amount: 1          | The amount of Item that player receives.
-#     enchantments:      | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported. (OPTIONAL).
-#       protection:      | Name of enchant you wish to apply.
-#         level: 3       | The level for enchant.
-#       unbreaking:      | You can set multiple enchants as long as they are registered.
-#         level: 2       | NOTE: If you don't want enchants simply remove the enchantments heading.
-#     lore: "USE ME"     | Add a custom lore to the reward. Use "\n" for next line. (OPTIONAL).
-#     commands:          | Add commands to execute when player wins a reward. Multiple commands supported. (OPTIONAL).
-#     - "say hi"         | Use \"%PLAYER%\" to insert player name (with the quotes and slash).
-#     - "say test"       | Don't forget to mention the maxCommands in config.yml.
-#  block: "911:0"        | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
+# crate-name:             | Set the name of the crate.
+#  drops:                 | List the items that can be received from the crate.
+#   - name: "G-Helmet"    | Custom name for the item. (OPTIONAL).
+#     id: 1               | ID of the reward.
+#     meta: 0             | Meta or Damage value of the Item.
+#     amount: 1           | The amount of Item that player receives.
+#     enchantments:       | Set enchants for items here. Both VanillaEnchantments and PiggyCustomEnchants are supported. (OPTIONAL).
+#       protection:       | Name of enchant you wish to apply.
+#         level: 3        | The level for enchant.
+#       unbreaking:       | You can set multiple enchants as long as they are registered.
+#         level: 2        | NOTE: If you don't want enchants simply remove the enchantments heading.
+#     lore: "USE ME"      | Add a custom lore to the reward. Use "\n" for next line. (OPTIONAL).
+#     commands:           | Add commands to execute when player wins a reward. Multiple commands supported. (OPTIONAL).
+#     - "say hi"          | Use \"%PLAYER%\" to insert player name (with the quotes and slash).
+#     - "say test"        | Don't forget to mention the maxCommands in config.yml.
+#  block: "911:0"         | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
+#  broadcast              | Want to broadcast a message when a player opens a crate?
+#   enable: true          | Set this to true to enable broadcasts and false to disable broadcasts.
+#   command: "say hi"     | The command the executes when a player opens a crate.
 # ------------------------
 
   common:
@@ -47,6 +50,9 @@ crates:
         meta: 0
         amount: 16
     block: "173:0"
+    broadcast:
+      enable: true
+      command: "say \"%PLAYER%\" is opening Common Crate at /crates"
   uncommon:
     drops:
       - name: "Money Drop"
@@ -60,6 +66,9 @@ crates:
         meta: 0
         amount: 10
     block: "42:0"
+    broadcast:
+      enable: true
+      command: "say \"%PLAYER%\" is opening UnCommon Crate at /crates"
   vote:
     drops:
       - id: 265
@@ -72,6 +81,9 @@ crates:
         meta: 0
         amount: 64
     block: "41:0"
+    broadcast:
+      enable: true
+      command: "say \"%PLAYER%\" is opening Vote Crate at /crates"
   mythic:
     drops:
       - id: 264
@@ -84,6 +96,9 @@ crates:
         meta: 0
         amount: 16
     block: "57:0"
+    broadcast:
+      enable: true
+      command: "say \"%PLAYER%\" is opening Mythic Crate at /crates"
   legendary:
     drops:
       - id: 322
@@ -93,6 +108,9 @@ crates:
         meta: 0
         amount: 16
     block: "133:0"
+    broadcast:
+      enable: true
+      command: "say \"%PLAYER%\" is opening Legendary Crate at /crates"
 
 # ---------------------------------------------------------
 # YOU CAN ADD MORE CRATES BELOW. JUST FOLLOW THE PATTERN.

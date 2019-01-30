@@ -71,6 +71,10 @@ class Main extends PluginBase{
 	private $crateDrops = [];
 	/** @var array */
 	private $crateBlocks = [];
+	/** @var array */
+	private $crateBroadcast = [];
+	/** @var array */
+	private $crateBroadcastMessage = [];
 	/** @var FloatingTextParticle[] */
 	private $textParticles;
 	/** @var Config */
@@ -108,6 +112,8 @@ class Main extends PluginBase{
 			$this->crates[$type] = $values;
 			$this->crateDrops[$type] = $values["drops"];
 			$this->crateBlocks[$values["block"]] = $type;
+			$this->crateBroadcast[$type] = $values["broadcast"]["enable"];
+			$this->crateBroadcastMessage[$type] = $values["broadcast"]["command"];
 		}
 	}
 
@@ -297,6 +303,22 @@ class Main extends PluginBase{
 		$values = explode(":", $this->getConfig()->getNested("key"));
 
 		return ((int) $values[0] === $item->getId()) && ((int) $values[1] === $item->getDamage()) && (!is_null($keyType = $item->getNamedTagEntry("KeyType"))) ? $keyType->getValue() : false;
+	}
+
+	/**
+	 * @param string $type
+	 * @return bool
+	 */
+	public function isBroadcastEnabled(string $type): bool{
+		return $this->crateBroadcast[$type];
+	}
+
+	/**
+	 * @param string $type
+	 * @return string
+	 */
+	public function getBroadcastMessage(string $type): string{
+		return $this->crateBroadcastMessage[$type];
 	}
 
 	/**

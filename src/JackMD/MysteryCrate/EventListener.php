@@ -37,6 +37,7 @@ namespace JackMD\MysteryCrate;
 
 use JackMD\MysteryCrate\Utils\Lang;
 use pocketmine\block\Block;
+use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
@@ -190,6 +191,11 @@ class EventListener implements Listener{
 							$item->setDamage($item->getDamage());
 							$player->getInventory()->setItemInHand($item);
 							$this->plugin->getScheduler()->scheduleRepeatingTask($updaterTask, 5);
+
+							if($this->plugin->isBroadcastEnabled($type)){
+								$cmd = $this->plugin->getBroadcastMessage($type);
+								$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), str_replace("%PLAYER%", $player->getName(), $cmd));
+							}
 
 							//Particle upon opening chest
 							$cx = $block->getX() + 0.5;
