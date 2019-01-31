@@ -75,7 +75,7 @@ class Main extends PluginBase{
 	private $crateBroadcast = [];
 	/** @var array */
 	private $crateBroadcastMessage = [];
-	/** @var FloatingTextParticle[] */
+	/** @var null|FloatingTextParticle[] */
 	private $textParticles;
 	/** @var Config */
 	private $blocksConfig;
@@ -358,9 +358,9 @@ class Main extends PluginBase{
 	}
 
 	/**
-	 * @return FloatingTextParticle[]
+	 * @return null|FloatingTextParticle[]
 	 */
-	public function getTextParticles(): array{
+	public function getTextParticles(): ?array{
 		return $this->textParticles;
 	}
 }
