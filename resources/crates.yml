@@ -31,7 +31,7 @@ crates:
 #     - "say hi"          | Use \"%PLAYER%\" to insert player name (with the quotes and slash).
 #     - "say test"        | Don't forget to mention the maxCommands in config.yml.
 #  block: "911:0"         | Set the block ID you want the crate to represent. Placing a chest on it will activate the crate.
-#  broadcast              | Want to broadcast a message when a player opens a crate?
+#  broadcast:             | Want to broadcast a message when a player opens a crate?
 #   enable: true          | Set this to true to enable broadcasts and false to disable broadcasts.
 #   command: "say hi"     | The command the executes when a player opens a crate.
 # ------------------------
