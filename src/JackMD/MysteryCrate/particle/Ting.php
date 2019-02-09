@@ -32,14 +32,14 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  */
 
-namespace JackMD\MysteryCrate\Particles;
+namespace JackMD\MysteryCrate\particle;
 
 use JackMD\MysteryCrate\Main;
-use pocketmine\level\particle\FlameParticle;
+use pocketmine\level\particle\HappyVillagerParticle;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 
-class Crown extends Task{
+class Ting extends Task{
 
 	/** @var Main */
 	private $plugin;
@@ -47,7 +47,7 @@ class Crown extends Task{
 	private $pos;
 
 	/**
-	 * Crown constructor.
+	 * Ting constructor.
 	 *
 	 * @param Main    $plugin
 	 * @param Vector3 $pos
@@ -63,15 +63,15 @@ class Crown extends Task{
 	public function onRun(int $tick){
 		$level = $this->plugin->getServer()->getLevelByName((string) $this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->pos;
-        $time = 1;
+        $time = 0;
         $pi = 3.14159;
-        $time = $time + 0.1 / $pi;
-        for ($i = 0; $i <= 2 * $pi; $i += $pi / 8) {
-            $x = $time * cos($i);
-            $y = exp(-0.1 * $time) * sin($time) + 1.5;
-            $z = $time * sin($i);
-            $level->addParticle(new FlameParticle($cpos->add($x, $y, $z)));
+        $time += $pi / 2;
+        for ($i = 0; $i <= 50; $i += $pi / 16) {
+            $radio = 1.5;
+            $x = $radio * cos($i) * sin($time);
+            $y = $radio * cos($time) + 1.5;
+            $z = $radio * sin($i) * sin($time);
+            $level->addParticle(new HappyVillagerParticle($cpos->add($x, $y - 1, $z)));
         }
     }
-
 }
