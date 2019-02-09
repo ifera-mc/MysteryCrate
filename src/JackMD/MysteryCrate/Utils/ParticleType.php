@@ -33,7 +33,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  */
 
-namespace JackMD\MysteryCrate\Utils;
+namespace JackMD\MysteryCrate\utils;
 
 class ParticleType{
 
