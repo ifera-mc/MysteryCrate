@@ -44,6 +44,7 @@ use JackMD\MysteryCrate\particle\Helix;
 use JackMD\MysteryCrate\particle\ParticleType;
 use JackMD\MysteryCrate\particle\Ting;
 use JackMD\UpdateNotifier\UpdateNotifier;
+use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
@@ -98,6 +99,9 @@ class Main extends PluginBase{
 	 */
 	private function checkVirions(): void{
 		if(!class_exists(UpdateNotifier::class)){
+			throw new \RuntimeException("MysteryCrate plugin will only work if you use the plugin phar from Poggit.");
+		}
+		if(!class_exists(InvMenu::class)){
 			throw new \RuntimeException("MysteryCrate plugin will only work if you use the plugin phar from Poggit.");
 		}
 	}
