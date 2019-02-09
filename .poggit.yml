@@ -8,4 +8,6 @@ projects:
     libs:
       - src: JackMD/UpdateNotifier/UpdateNotifier
         version: ^1.0.0
+      - src: muqsit/InvMenu/InvMenu
+        version: ^2.0.0
 ...
