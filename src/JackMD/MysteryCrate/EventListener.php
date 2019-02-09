@@ -35,7 +35,7 @@ declare(strict_types = 1);
 
 namespace JackMD\MysteryCrate;
 
-use JackMD\MysteryCrate\Utils\Lang;
+use JackMD\MysteryCrate\utils\Lang;
 use pocketmine\block\Block;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\block\BlockBreakEvent;
