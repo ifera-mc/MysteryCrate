@@ -31,7 +31,7 @@
 
 # DO NOT EDIT THIS VALUE.
 # ONLY FOR INTERNAL USE.
-config-version: 1
+config-version: 2
 
 # The ID:META of the key you want to use for opening crates.
 # Its better not to edit this value unless you can edit the source code.
@@ -57,6 +57,10 @@ maxCommands: 5
 # Recommended to set it to 2.
 # Enter the value in seconds.
 tickDelay: 2
+
+# Adjust the speed of how fast the items move inside the chest.
+# Recommended to set it to 5.
+scrollSpeed: 5
 
 # If your server suffers from bad lag then set showParticle to false.
 # Setting this to false will remove the particles above the crate.
