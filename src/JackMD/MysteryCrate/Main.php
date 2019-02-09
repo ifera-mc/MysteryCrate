@@ -35,15 +35,16 @@ declare(strict_types = 1);
 
 namespace JackMD\MysteryCrate;
 
-use JackMD\MysteryCrate\Commands\KeyCommand;
-use JackMD\MysteryCrate\Particles\CloudRain;
-use JackMD\MysteryCrate\Particles\Crown;
-use JackMD\MysteryCrate\Particles\DoubleHelix;
-use JackMD\MysteryCrate\Particles\Helix;
-use JackMD\MysteryCrate\Particles\Ting;
-use JackMD\MysteryCrate\Utils\Lang;
-use JackMD\MysteryCrate\Utils\ParticleType;
+use JackMD\MysteryCrate\command\KeyCommand;
+use JackMD\MysteryCrate\particle\CloudRain;
+use JackMD\MysteryCrate\particle\Crown;
+use JackMD\MysteryCrate\particle\DoubleHelix;
+use JackMD\MysteryCrate\particle\Helix;
+use JackMD\MysteryCrate\particle\Ting;
+use JackMD\MysteryCrate\utils\Lang;
+use JackMD\MysteryCrate\utils\ParticleType;
 use JackMD\UpdateNotifier\UpdateNotifier;
+use muqsit\invmenu\InvMenuHandler;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
@@ -59,9 +60,8 @@ class Main extends PluginBase{
 
 	/** @var int */
 	private const CRATES_VERSION = 1;
-
 	/** @var int */
-	private const CONFIG_VERSION = 1;
+	private const CONFIG_VERSION = 2;
 
 	/** @var bool */
 	private $notInUse = false;
@@ -141,6 +141,10 @@ class Main extends PluginBase{
 	public function onEnable(): void{
 		$this->initParticles();
 		$this->initTextParticle();
+
+		if(!InvMenuHandler::isRegistered()){
+			InvMenuHandler::register($this);
+		}
 
 		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
