@@ -37,7 +37,7 @@ namespace JackMD\MysteryCrate;
 
 use DaPigGuy\PiggyCustomEnchants\CustomEnchants\CustomEnchants;
 use DaPigGuy\PiggyCustomEnchants\Main as CE;
-use JackMD\MysteryCrate\utils\Lang;
+use JackMD\MysteryCrate\lang\Lang;
 use muqsit\invmenu\inventories\BaseFakeInventory;
 use muqsit\invmenu\InvMenu;
 use pocketmine\block\Block;
