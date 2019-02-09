@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * ___  ___          _                  _____           _
@@ -37,9 +37,10 @@ namespace JackMD\MysteryCrate;
 
 use DaPigGuy\PiggyCustomEnchants\CustomEnchants\CustomEnchants;
 use DaPigGuy\PiggyCustomEnchants\Main as CE;
-use JackMD\MysteryCrate\Task\PutChest;
-use JackMD\MysteryCrate\Task\RemoveChest;
 use JackMD\MysteryCrate\Utils\Lang;
+use muqsit\invmenu\inventories\BaseFakeInventory;
+use muqsit\invmenu\InvMenu;
+use pocketmine\block\Block;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
@@ -49,167 +50,197 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
-use pocketmine\tile\Chest as ChestTile;
 
 class UpdaterEvent extends Task{
 
 	/** @var Main */
 	private $plugin;
-	/** @var bool */
-	private $canTakeItem = false;
 	/** @var int */
-	private $t_delay = 2 * 20;
+	private $t_delay;
 	/** @var Player */
 	private $player;
-	/** @var ChestTile */
-	private  $chestTile;
+	/** @var Block */
+	private $chestBlock;
+	/** @var InvMenu */
+	private $crateMenu;
 
-	public function __construct(Main $plugin, Player $player, ChestTile $chestTile, int $t_delay){
+	/**
+	 * UpdaterEvent constructor.
+	 *
+	 * @param Main   $plugin
+	 * @param Player $player
+	 * @param Block  $chestBlock
+	 * @param int    $t_delay
+	 */
+	public function __construct(Main $plugin, Player $player, Block $chestBlock, int $t_delay){
 		$this->plugin = $plugin;
 		$this->player = $player;
-		$this->chestTile = $chestTile;
+		$this->chestBlock = $chestBlock;
 		$this->t_delay = $t_delay;
+
+		$crateMenu = InvMenu::create(InvMenu::TYPE_CHEST);
+		$crateMenu->readonly();
+		$crateMenu->setInventoryCloseListener([$this, 'closeInventory']);
+		$crateMenu->send($player);
+
+		$this->crateMenu = $crateMenu;
+	}
+
+	/**
+	 * @param Player            $player
+	 * @param BaseFakeInventory $inventory
+	 */
+	public function closeInventory(Player $player, BaseFakeInventory $inventory){
+		if((!is_null($this->getHandler())) && (!$this->getHandler()->isCancelled())){
+			$chestBlock = $this->chestBlock;
+			$typeBlock = $chestBlock->getLevel()->getBlock($chestBlock->subtract(0, 1));
+			$type = $this->plugin->isCrateBlock($typeBlock->getId(), $typeBlock->getDamage());
+			$reward = $this->getReward();
+
+			if($player->isOnline()){
+				$this->rewardPlayer($player, $reward, $type);
+			}
+
+			$this->getHandler()->cancel();
+		}
+	}
+
+	/**
+	 * @param Player $player
+	 * @param Item   $item
+	 * @param string $type
+	 */
+	public function rewardPlayer(Player $player, Item $item, string $type){
+		if($item->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
+			$nbt = $item->getNamedTag();
+			for($i = 0; $i < $this->plugin->getConfig()->get("maxCommands"); $i++){
+				if($nbt->hasTag((string) $i, StringTag::class)){
+					$cmd = $nbt->getString((string) $i);
+					$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), $cmd);
+				}
+			}
+		}else{
+			$player->getInventory()->addItem($item);
+			$win_message = str_replace(["%REWARD%", "%COUNT%", "%CRATE%"], [
+				$item->getName(),
+				$item->getCount(),
+				ucfirst($type)
+			], Lang::$win_message);
+			$player->sendMessage($win_message);
+		}
+	}
+
+	/**
+	 * @return Item
+	 */
+	public function getReward(): Item{
+		$chestBlock = $this->chestBlock;
+		$player = $this->player;
+
+		$typeBlock = $chestBlock->getLevel()->getBlock($chestBlock->subtract(0, 1));
+		$type = $this->plugin->isCrateBlock($typeBlock->getId(), $typeBlock->getDamage());
+		$drops = $this->plugin->getCrateDrops($type);
+
+		$reward = array_rand($drops, 1);
+		$reward = $drops[$reward];
+
+		if(!isset($reward["id"]) || !isset($reward["meta"]) || !isset($reward["amount"])){
+			$this->player->kick("§cMysteryCrate caught fire!\nPlease report to Admin to look for error on console.", false);
+			$this->plugin->getLogger()->error("Either `id` or `meta` or `amount` key is missing in " . ucfirst($type) . " Crate.");
+			$this->plugin->getServer()->getPluginManager()->disablePlugin($this->plugin);
+		}
+
+		$item = Item::get($reward["id"], $reward["meta"], $reward["amount"]);
+
+		if(isset($reward["name"])){
+			$item->setCustomName($reward["name"]);
+		}
+		if(isset($reward["lore"])){
+			$item->setLore([$reward["lore"]]);
+		}
+		if(isset($reward["commands"])){
+			foreach($reward["commands"] as $index => $cmd){
+				$nbt = $item->getNamedTag() ?? new CompoundTag("", []);
+				$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
+				$nbt->setString((string) $index, $cmd);
+				$item->setNamedTag($nbt);
+			}
+		}
+		if(isset($reward["enchantments"])){
+			foreach($reward["enchantments"] as $enchantName => $enchantData){
+				$level = $enchantData["level"];
+				$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
+				if(!is_null($ce) && !is_null($enchant = CustomEnchants::getEnchantmentByName($enchantName))){
+					if($ce instanceof CE){
+						$item = $ce->addEnchantment($item, $enchantName, $level);
+					}
+				}else{
+					if(!is_null($enchant = Enchantment::getEnchantmentByName($enchantName))){
+						$item->addEnchantment(new EnchantmentInstance($enchant, $level));
+					}
+				}
+			}
+		}
+
+		return $item;
 	}
 
 	/**
 	 * @param int $timer
 	 */
 	public function onRun(int $timer){
-		$t_delay = $this->getTDelay();
-		$chestTile = $this->chestTile;
+		$t_delay = $this->t_delay;
+		$chestBlock = $this->chestBlock;
 		$player = $this->player;
-		if((is_null($chestTile)) || (is_null($player))){
-			return;
-		}
-		if(($chestTile instanceof ChestTile) && ($player instanceof Player) && ($player->isOnline())){
+
+		$crateMenu = $this->crateMenu;
+		$crateInventory = $crateMenu->getInventory();
+
+		if(($player instanceof Player) && ($player->isOnline())){
 			$this->t_delay--;
+
 			if($t_delay >= 0){
 				$i = 0;
 				while($i < 27){
-					if($i != 4 && $i != 10 && $i != 11 && $i != 12 && $i != 13 && $i != 14 && $i != 15 && $i != 16 && $i != 22){
-						$this->setItemINT($i, 106, 1);
+					if($i !== 4 && $i !== 10 && $i !== 11 && $i !== 12 && $i !== 13 && $i !== 14 && $i !== 15 && $i !== 16 && $i !== 22){
+						$this->setItem($i, Item::get(Item::VINE));
 					}
 					$i++;
 				}
-				$this->setItemINT(4, 208, 1);
-				$this->setItemINT(22, 208, 1);
-				$block = $this->chestTile->getBlock();
-				$block->getLevel()->addSound(new ClickSound($block), [$player]);
-				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
-				$drops = array_rand($this->plugin->getCrateDrops($type), 1);
-				if(!is_array($drops)){
-					$drops = [$drops];
-				}
-				foreach($drops as $drop){
-					$values = $this->plugin->getCrateDrops($type)[$drop];
-					if(!isset($values["id"]) || !isset($values["meta"]) || !isset($values["amount"])){
-						$this->player->kick("§cMysteryCrate caught fire!\nPlease report to Admin to look for error on console.", false);
-						$this->plugin->getLogger()->error("Either `id` or `meta` or `amount` key is missing in " . ucfirst($type) . " Crate.");
-						$this->plugin->getServer()->getPluginManager()->disablePlugin($this->plugin);
-						break;
-					}
-					$i = Item::get(($values["id"]), $values["meta"], $values["amount"]);
-					if(isset($values["name"])){
-						$i->setCustomName($values["name"]);
-					}
-					if(isset($values["enchantments"])){
-						foreach($values["enchantments"] as $enchantment => $enchantmentinfo){
-							$level = $enchantmentinfo["level"];
-							$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
-							if(!is_null($ce) && !is_null($enchant = CustomEnchants::getEnchantmentByName($enchantment))){
-								if($ce instanceof CE){
-									$i = $ce->addEnchantment($i, $enchantment, $level);
-								}
-							}else{
-								if(!is_null($enchant = Enchantment::getEnchantmentByName($enchantment))){
-									$i->addEnchantment(new EnchantmentInstance($enchant, $level));
-								}
-							}
-						}
-					}
-					if(isset($values["lore"])){
-						$i->setLore([$values["lore"]]);
-					}
-					if(isset($values["commands"])){
-						foreach($values["commands"] as $index => $cmd){
-							$nbt = $i->getNamedTag() ?? new CompoundTag("", []);
-							$cmd = str_replace(["%PLAYER%"], [$player->getName()], $cmd);
-							$nbt->setString((string) $index, $cmd);
-							$i->setNamedTag($nbt);
-						}
-					}
-					$cInv = $chestTile->getInventory();
-					$this->setItem(10, $cInv->getItem(11), $cInv->getItem(11)->getCount(), $cInv->getItem(11)->getDamage());
-					$this->setItem(11, $cInv->getItem(12), $cInv->getItem(12)->getCount(), $cInv->getItem(12)->getDamage());
-					$this->setItem(12, $cInv->getItem(13), $cInv->getItem(13)->getCount(), $cInv->getItem(13)->getDamage());
-					$this->setItem(13, $cInv->getItem(14), $cInv->getItem(14)->getCount(), $cInv->getItem(14)->getDamage());//reward
-					$this->setItem(14, $cInv->getItem(15), $cInv->getItem(15)->getCount(), $cInv->getItem(15)->getDamage());
-					$this->setItem(15, $cInv->getItem(16), $cInv->getItem(16)->getCount(), $cInv->getItem(16)->getDamage());
-					$this->setItem(16, $i, $i->getCount(), $i->getDamage());
-				}
+
+				$this->setItem(4, Item::get(Item::END_ROD));
+				$this->setItem(22, Item::get(Item::END_ROD));
+
+				$chestBlock->getLevel()->addSound(new ClickSound($chestBlock), [$player]);
+
+				$reward = $this->getReward();
+				$this->setItem(10, $crateInventory->getItem(11));
+				$this->setItem(11, $crateInventory->getItem(12));
+				$this->setItem(12, $crateInventory->getItem(13));
+				$this->setItem(13, $crateInventory->getItem(14));//reward
+				$this->setItem(14, $crateInventory->getItem(15));
+				$this->setItem(15, $crateInventory->getItem(16));
+				$this->setItem(16, $reward);
 			}
+
 			if($t_delay == -1){
-				$this->setItemINT(10, 0, 0);
-				$this->setItemINT(11, 0, 0);
-				$this->setItemINT(12, 0, 0);
-				$this->setItemINT(14, 0, 0);
-				$this->setItemINT(15, 0, 1);
-				$this->setItemINT(16, 0, 1);
-				$this->setCanTakeItem(true);
-				$slot13 = $chestTile->getInventory()->getItem(13);
-				$block = $this->chestTile->getBlock();
-				$b = $block->getLevel()->getBlock($block->subtract(0, 1));
-				$type = $this->plugin->isCrateBlock($b->getId(), $b->getDamage());
+				$this->setItem(10, Item::get(Item::AIR));
+				$this->setItem(11, Item::get(Item::AIR));
+				$this->setItem(12, Item::get(Item::AIR));
+				$this->setItem(14, Item::get(Item::AIR));
+				$this->setItem(15, Item::get(Item::AIR));
+				$this->setItem(16, Item::get(Item::AIR));
+
+				$reward = $crateInventory->getItem(13);
+
+				$typeBlock = $chestBlock->getLevel()->getBlock($chestBlock->subtract(0, 1));
+				$type = $this->plugin->isCrateBlock($typeBlock->getId(), $typeBlock->getDamage());
+
 				if($player->isOnline()){
-					if($slot13->getDamage() === $this->plugin->getConfig()->get("commandMeta")){
-						$nbt = $slot13->getNamedTag();
-						for($i = 0; $i < $this->plugin->getConfig()->get("maxCommands"); $i++){
-							if($nbt->hasTag((string) $i, StringTag::class)){
-								$cmd = $nbt->getString((string) $i);
-								$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), $cmd);
-							}
-						}
-					}else{
-						$player->getInventory()->addItem($slot13);
-						$win_message = str_replace(["%REWARD%", "%COUNT%", "%CRATE%"], [
-							$slot13->getName(),
-							$slot13->getCount(),
-							ucfirst($type)
-						], Lang::$win_message);
-						$player->sendMessage($win_message);
-					}
+					$this->rewardPlayer($player, $reward, $type);
 				}
-				$dmg = $block->getDamage();
-				$this->plugin->getScheduler()->scheduleDelayedTask(new RemoveChest($this->plugin, $block), 20);
-				$this->plugin->getScheduler()->scheduleDelayedTask(new PutChest($this->plugin, $block, $dmg), 24);
-				$this->plugin->getScheduler()->cancelTask($this->getTaskId());
-			}
-		}
-	}
 
-	/**
-	 * @return int
-	 */
-	public function getTDelay(): int{
-		return $this->t_delay;
-	}
-
-	/**
-	 * @param     $index
-	 * @param int $id
-	 * @param     $count
-	 * @param int $dmg
-	 */
-	public function setItemINT($index, int $id, $count, $dmg = 0){
-		$item = Item::get($id);
-		$item->setCount($count);
-		$item->setDamage($dmg);
-
-		$chestTile = $this->chestTile;
-		if(!is_null($chestTile) && ($chestTile instanceof ChestTile)){
-			if(!is_null($chestTile->getInventory())){
-				$chestTile->getInventory()->setItem($index, $item);
+				$this->getHandler()->cancel();
 			}
 		}
 	}
@@ -217,32 +248,9 @@ class UpdaterEvent extends Task{
 	/**
 	 * @param      $index
 	 * @param Item $item
-	 * @param      $count
-	 * @param int  $dmg
 	 */
-	public function setItem($index, Item $item, $count, $dmg = 0){
-		$item->setCount($count);
-		$item->setDamage($dmg);
-
-		$chestTile = $this->chestTile;
-		if(!is_null($chestTile) && ($chestTile instanceof ChestTile)){
-			if(!is_null($chestTile->getInventory())){
-				$chestTile->getInventory()->setItem($index, $item);
-			}
-		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isCanTakeItem(): bool{
-		return $this->canTakeItem;
-	}
-
-	/**
-	 * @param bool $canTakeItem
-	 */
-	public function setCanTakeItem(bool $canTakeItem){
-		$this->canTakeItem = $canTakeItem;
+	public function setItem($index, Item $item){
+		$crateMenu = $this->crateMenu;
+		$crateMenu->getInventory()->setItem($index, $item);
 	}
 }
