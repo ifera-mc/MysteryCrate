@@ -32,7 +32,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  */
 
-namespace JackMD\MysteryCrate\Commands;
+namespace JackMD\MysteryCrate\command;
 
 use JackMD\MysteryCrate\Main;
 use pocketmine\command\CommandSender;
