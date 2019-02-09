@@ -36,13 +36,13 @@ declare(strict_types = 1);
 namespace JackMD\MysteryCrate;
 
 use JackMD\MysteryCrate\command\KeyCommand;
+use JackMD\MysteryCrate\lang\Lang;
 use JackMD\MysteryCrate\particle\CloudRain;
 use JackMD\MysteryCrate\particle\Crown;
 use JackMD\MysteryCrate\particle\DoubleHelix;
 use JackMD\MysteryCrate\particle\Helix;
+use JackMD\MysteryCrate\particle\ParticleType;
 use JackMD\MysteryCrate\particle\Ting;
-use JackMD\MysteryCrate\utils\Lang;
-use JackMD\MysteryCrate\utils\ParticleType;
 use JackMD\UpdateNotifier\UpdateNotifier;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\item\enchantment\Enchantment;
