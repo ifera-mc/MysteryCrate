@@ -32,7 +32,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  */
 
-namespace JackMD\MysteryCrate\Particles;
+namespace JackMD\MysteryCrate\particle;
 
 use JackMD\MysteryCrate\Main;
 use pocketmine\level\particle\FlameParticle;

@@ -32,14 +32,14 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  */
 
-namespace JackMD\MysteryCrate\Particles;
+namespace JackMD\MysteryCrate\particle;
 
 use JackMD\MysteryCrate\Main;
 use pocketmine\level\particle\FlameParticle;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 
-class Helix extends Task{
+class Crown extends Task{
 
 	/** @var Main */
 	private $plugin;
@@ -47,7 +47,7 @@ class Helix extends Task{
 	private $pos;
 
 	/**
-	 * Helix constructor.
+	 * Crown constructor.
 	 *
 	 * @param Main    $plugin
 	 * @param Vector3 $pos
@@ -63,17 +63,15 @@ class Helix extends Task{
 	public function onRun(int $tick){
 		$level = $this->plugin->getServer()->getLevelByName((string) $this->plugin->getConfig()->get("crateWorld"));
 		$cpos = $this->pos;
-		$radio = 1;
-		for($y = 0; $y < 2; $y += 0.2){
-			$x = $radio * cos($y);
-			$z = $radio * sin($y);
-			$level->addParticle(new FlameParticle($cpos->add($x, $y, $z)));
-		}
-		for($y = 0; $y < 2; $y += 0.2){
-			$x = -$radio * cos($y);
-			$z = -$radio * sin($y);
-			$level->addParticle(new FlameParticle($cpos->add($x, $y, $z)));
-		}
-	}
-	
+        $time = 1;
+        $pi = 3.14159;
+        $time = $time + 0.1 / $pi;
+        for ($i = 0; $i <= 2 * $pi; $i += $pi / 8) {
+            $x = $time * cos($i);
+            $y = exp(-0.1 * $time) * sin($time) + 1.5;
+            $z = $time * sin($i);
+            $level->addParticle(new FlameParticle($cpos->add($x, $y, $z)));
+        }
+    }
+
 }
