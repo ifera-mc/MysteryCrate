@@ -25,7 +25,7 @@
  - Now mention the `name` of the`world` where the crate is located in `crateWorld`.
  - Reload the server.
  - Place the block down you initially set in `crates.yml` under `block: "ID:META"` key.
- - Place a chest `ID: 54` on top of that block.
+ - Place either a chest, ender chest or trapped chest on top of that block.
  - To open the crate you require a `crateKey`.
  - To get the key use `/key [type] [player] [amount]` in-game and then tap the crate with it. You can set/see the crate type in `crates.yml` file.
 ### FAQs
@@ -42,7 +42,7 @@ A: Yes you can. Navigate to `blocks.yml` and edit the crate text you see. For ex
 **Q: I found a issue in the plugin what do I do?**<br />
 A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) and give as much detail as possible.<br /><br />
 **Q: I would like a new feature to be added. How do I report?**<br />
-A: Enter the feature in [#34](https://github.com/JackMD/MysteryCrate/issues/34). Give as much detail as possible and I will see what I can come up with.<br /><br />
+A: Please open an issue [here](https://github.com/JackMD/MysteryCrate/issues) and give as much detail as possible.<br /><br />
 **Q: What to do with the `blocks.yml` file?**<br />
 A: You need not to do anything with it unless you want to edit the floatiing text. The plugin automatically generates stuff within the file to make the setup for the user easier.
 ### Commands and Permissions
@@ -52,24 +52,13 @@ A: You need not to do anything with it unless you want to edit the floatiing tex
 |Use a crate|`~`|`mc.crates.use`|`true`|
 |Destroy a crate|`~`|`mc.crates.destroy`|`op`|
 |Create a crate|`~`|`mc.crates.create`|`op`|
-### TODO's
- - [X] Add basic particles.
- - [X] Add floating text above the crate(s).
- - [X] Add ability to execute commands as a reward.
- - [X] Add custom lore to the rewards.
- - [X] Finish working on commands.
- - [X] Add custom `crates.yml`to declare custom items to be given to players.
- - [X] Make setup a bit easier.
- - [X] Make it so that not random items are generated in all the slots as discussed [#1](https://github.com/JackMD/MysteryCrate/issues/1)
- - [X] Add support for making more than one crate.
- - [X] Add support for normal enchants.
- - [X] Add support for custom enchants.
- - [X] Find more in [#34](https://github.com/JackMD/MysteryCrate/issues/34).
 ### Info
   - Make sure to subscribe to be updated for when i release more stuff on my [YT](https://youtu.be/x_mc-ocrdDU) channel.
   - Support is appreciated.
   - Please don't hesitate to ask questions or report bug report in issues section.
 ### Credits
   - [PiggyCrates](https://github.com/DaPigGuy/PiggyCrates) by [@DaPigGuy](https://github.com/DaPigGuy)
-### Video
+  - [InvMenu](https://github.com/Muqsit/InvMenu) by [@Muqsit](https://github.com/Muqsit)
+### Videos
 [![YouTube](https://img.youtube.com/vi/x_mc-ocrdDU/0.jpg)](https://youtu.be/x_mc-ocrdDU)
+[![YouTube](http://img.youtube.com/vi/dnUkjgA2v1k/0.jpg)](http://www.youtube.com/watch?v=dnUkjgA2v1k)
