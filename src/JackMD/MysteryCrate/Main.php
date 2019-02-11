@@ -35,6 +35,7 @@ declare(strict_types = 1);
 
 namespace JackMD\MysteryCrate;
 
+use JackMD\ConfigUpdater\ConfigUpdater;
 use JackMD\MysteryCrate\command\KeyCommand;
 use JackMD\MysteryCrate\lang\Lang;
 use JackMD\MysteryCrate\particle\CloudRain;
@@ -98,10 +99,7 @@ class Main extends PluginBase{
 	 * Checks if the required virions/libraries are present before enabling the plugin.
 	 */
 	private function checkVirions(): void{
-		if(!class_exists(UpdateNotifier::class)){
-			throw new \RuntimeException("MysteryCrate plugin will only work if you use the plugin phar from Poggit.");
-		}
-		if(!class_exists(InvMenu::class)){
+		if(!class_exists(UpdateNotifier::class) || !class_exists(InvMenu::class) || !class_exists(ConfigUpdater::class)){
 			throw new \RuntimeException("MysteryCrate plugin will only work if you use the plugin phar from Poggit.");
 		}
 	}
@@ -126,20 +124,9 @@ class Main extends PluginBase{
 	 */
 	private function checkConfigs(): void{
 		$cratesConfig = new Config($this->getDataFolder() . "crates.yml", Config::YAML);
-		if((!$cratesConfig->exists("crates-version")) || ($cratesConfig->get("crates-version") !== self::CRATES_VERSION)){
-			rename($this->getDataFolder() . "crates.yml", $this->getDataFolder() . "crates_old.yml");
-			$this->saveResource("crates.yml");
-			$this->getLogger()->critical("Your crates.yml file is outdated.");
-			$this->getLogger()->notice("Your old crates.yml has been saved as crates_old.yml and a new crates.yml file has been generated. Please update accordingly.");
-		}
 
-		$config = $this->getConfig();
-		if((!$config->exists("config-version")) || ($config->get("config-version") !== self::CONFIG_VERSION)){
-			rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-			$this->saveResource("config.yml");
-			$this->getLogger()->critical("Your config.yml file is outdated.");
-			$this->getLogger()->notice("Your old config.yml has been saved as config_old.yml and a new config.yml file has been generated. Please update accordingly.");
-		}
+		ConfigUpdater::checkUpdate($this, $cratesConfig, "", "crates", "yml", "crates-version", self::CRATES_VERSION);
+		ConfigUpdater::checkUpdate($this, $this->getConfig(), "", "config", "yml", "config-version", self::CONFIG_VERSION);
 	}
 
 	public function onEnable(): void{
