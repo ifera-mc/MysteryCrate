@@ -125,8 +125,8 @@ class Main extends PluginBase{
 	private function checkConfigs(): void{
 		$cratesConfig = new Config($this->getDataFolder() . "crates.yml", Config::YAML);
 
-		ConfigUpdater::checkUpdate($this, $cratesConfig, "", "crates", "yml", "crates-version", self::CRATES_VERSION);
-		ConfigUpdater::checkUpdate($this, $this->getConfig(), "", "config", "yml", "config-version", self::CONFIG_VERSION);
+		ConfigUpdater::checkUpdate($this, $cratesConfig, "crates-version", self::CRATES_VERSION);
+		ConfigUpdater::checkUpdate($this, $this->getConfig(), "config-version", self::CONFIG_VERSION);
 	}
 
 	public function onEnable(): void{
