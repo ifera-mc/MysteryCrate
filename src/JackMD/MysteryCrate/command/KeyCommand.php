@@ -74,6 +74,26 @@ class KeyCommand extends PluginCommand{
 			$args[0] = strtolower($args[0]);
 			if(isset($args[1])){
 				$target = $plugin->getServer()->getPlayer($args[1]);
+				// Allow support for key all
+				if($args[1] === "all") {
+					if(!$plugin->getCrateType($args[0])) {
+						$sender->sendMessage(TextFormat::RED . "Invalid crate type.");
+						return true;
+					}
+					if(isset($args[2]) and is_numeric($args[2])){
+						$amount = (int) $args[2];
+					}else {
+						$amount = (int) 1;
+					}
+					foreach($plugin->getServer()->getOnlinePlayers() as $onlinePlayer) {
+						$name = $onlinePlayer->getName();
+						$plugin->giveKey($onlinePlayer, $args[0], $amount);
+						$onlinePlayer->sendMessage("§8§l(§aKey All§8)§r " . TextFormat::GREEN . ucfirst($args[0]) . " key has been given to everyone!");
+					}
+					$sender->sendMessage(TextFormat::GREEN . ucfirst($args[0]) . " key has been given to everyone.");
+					return true;
+				}
+				
 				if(!$target instanceof Player){
 					$sender->sendMessage(TextFormat::RED . "Invalid player.");
 					return true;
