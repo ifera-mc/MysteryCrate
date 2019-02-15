@@ -81,7 +81,7 @@ class KeyCommand extends PluginCommand{
             $lowercaseCrateType = strtolower($args[0]);
             $plugin->giveKey($target, $lowercaseCrateType, $keyAmount);
             $sender->sendMessage(TextFormat::GREEN . ucfirst($lowercaseCrateType) . " key has been given.");
-        } else{
+        }else{
             $sender->sendMessage(TextFormat::RED . "Please specify a valid player.");
         }
 
