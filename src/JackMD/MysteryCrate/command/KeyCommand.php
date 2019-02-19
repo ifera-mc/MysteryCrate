@@ -38,65 +38,71 @@ use JackMD\MysteryCrate\Main;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\Player;
+use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
 class KeyCommand extends PluginCommand{
 
-	/**
-	 * KeyCommand constructor.
-	 *
-	 * @param Main $plugin
-	 */
-	public function __construct(Main $plugin){
-		parent::__construct("key", $plugin);
-		$this->setDescription("Give a crate key to a player.");
-		$this->setUsage("/key [type] [player] [amount]");
-		$this->setPermission("mc.command.key");
-	}
-	
-	/**
-	 * @param CommandSender $sender
-	 * @param string        $commandLabel
-	 * @param array         $args
-	 * @return bool|mixed
-	 */
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(!$this->testPermission($sender)){
-			return true;
-		}
-		$plugin = $this->getPlugin();
-		if($plugin instanceof Main){
-			if(!isset($args[0])){
-				$sender->sendMessage(TextFormat::RED . "Usage: /key [type] [player] [amount]");
-				return true;
-			}
-			$target = $sender;
-			$args[0] = strtolower($args[0]);
-			if(isset($args[1])){
-				$target = $plugin->getServer()->getPlayer($args[1]);
-				if(!$target instanceof Player){
-					$sender->sendMessage(TextFormat::RED . "Invalid player.");
-					return true;
-				}
-			}else{
-				if(!$target instanceof Player){
-					$sender->sendMessage(TextFormat::RED . "Please specify a player.");
-					return true;
-				}
-			}
-			if(!$plugin->getCrateType($args[0])){
-				$sender->sendMessage(TextFormat::RED . "Invalid crate type.");
-				return true;
-			}
-			if(isset($args[2]) and is_numeric($args[2])){
-				$amount = (int) $args[2];
-			}else{
-				$amount = (int) 1;
-			}
-			$plugin->giveKey($target, $args[0], $amount);
-			$sender->sendMessage(TextFormat::GREEN . ucfirst($args[0]) . " key has been given.");
-			return true;
-		}
-		return true;
-	}
+    /**
+     * KeyCommand constructor.
+     *
+     * @param Main $plugin
+     */
+    public function __construct(Main $plugin){
+        parent::__construct("key", $plugin);
+        $this->setDescription("Give a crate key to a player.");
+        $this->setUsage("/key [type] [player] [amount]");
+        $this->setPermission("mc.command.key");
+    }
+
+    /**
+     * @return Plugin|Main
+     */
+    public function getPlugin(): Plugin{
+        return parent::getPlugin();
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param string        $commandLabel
+     * @param array         $args
+     * @return bool|mixed
+     */
+    public function execute(CommandSender $sender, string $commandLabel, array $args){
+        if(!$this->testPermission($sender) or $this->checkArgs($args, $sender)){
+            return true;
+        }
+
+        $plugin = $this->getPlugin();
+        $target = isset($args[1]) ? $plugin->getServer()->getPlayer($args[1]) : $sender;
+
+        if($target instanceof Player){
+            $keyAmount = (isset($args[2]) and is_numeric($args[2])) ? (int) $args[2] : 1;
+            $lowercaseCrateType = strtolower($args[0]);
+            $plugin->giveKey($target, $lowercaseCrateType, $keyAmount);
+            $sender->sendMessage(TextFormat::GREEN . ucfirst($lowercaseCrateType) . " key has been given.");
+        }else{
+            $sender->sendMessage(TextFormat::RED . "Please specify a valid player.");
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns true when the args are not valid, false when everything is okay
+     *
+     * @param array $args
+     * @param CommandSender $sender
+     * @return bool
+     */
+    private function checkArgs(array $args, CommandSender $sender): bool{
+        if(!isset($args[0])){
+            $sender->sendMessage(TextFormat::RED . "Usage: /key [type] [player] [amount]");
+        }elseif(!$this->getPlugin()->getCrateType(strtolower($args[0]))){
+            $sender->sendMessage(TextFormat::RED . "Invalid crate type.");
+        }else{
+            return false;
+        }
+        return true;
+    }
 }
