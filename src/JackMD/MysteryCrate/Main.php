@@ -66,8 +66,6 @@ class Main extends PluginBase{
 	/** @var int */
 	private const CONFIG_VERSION = 2;
 
-	/** @var bool */
-	private $notInUse = false;
 	/** @var array */
 	private $crates = [];
 	/** @var array */
@@ -91,7 +89,6 @@ class Main extends PluginBase{
 		$this->saveDefaultConfig();
 		$this->initCrates();
 		$this->checkConfigs();
-		$this->setNotInUse(true);
 
 		UpdateNotifier::checkUpdate($this, $this->getDescription()->getName(), $this->getDescription()->getVersion());
 	}
@@ -239,20 +236,6 @@ class Main extends PluginBase{
 				$this->textParticles[$type] = new FloatingTextParticle($pos, '', $text . TextFormat::RESET);
 			}
 		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isNotInUse(): bool{
-		return $this->notInUse;
-	}
-
-	/**
-	 * @param bool $notInUse
-	 */
-	public function setNotInUse(bool $notInUse): void{
-		$this->notInUse = $notInUse;
 	}
 
 	/**
