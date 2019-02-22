@@ -69,15 +69,17 @@ class KeyAllCommand extends PluginCommand{
 			return true;
 		}
 
+		$keyAmount = (isset($args[1]) and is_numeric($args[1])) ? (int)$args[1] : 1;
+		$lowercaseCrateType = strtolower($args[0]);
+
 		foreach($this->plugin->getServer()->getOnlinePlayers() as $target){
 			if($target->isOnline()){
-				$keyAmount = (isset($args[1]) and is_numeric($args[1])) ? (int)$args[1] : 1;
-				$lowercaseCrateType = strtolower($args[0]);
-
 				$this->plugin->giveKey($target, $lowercaseCrateType, $keyAmount);
-				$sender->sendMessage(TextFormat::GREEN . ucfirst($lowercaseCrateType) . " key has been given.");
+				$target->sendMessage("Everyone has been give a " . ucfirst($lowercaseCrateType) . " key.");
 			}
 		}
+
+		$sender->sendMessage(TextFormat::GREEN . ucfirst($lowercaseCrateType) . " key has been given to everyone.");
 
 		return true;
 	}
