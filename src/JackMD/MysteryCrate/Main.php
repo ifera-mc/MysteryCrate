@@ -36,6 +36,7 @@ declare(strict_types = 1);
 namespace JackMD\MysteryCrate;
 
 use JackMD\ConfigUpdater\ConfigUpdater;
+use JackMD\MysteryCrate\command\KeyAllCommand;
 use JackMD\MysteryCrate\command\KeyCommand;
 use JackMD\MysteryCrate\lang\Lang;
 use JackMD\MysteryCrate\particle\CloudRain;
@@ -138,6 +139,7 @@ class Main extends PluginBase{
 		}
 
 		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyCommand($this));
+		$this->getServer()->getCommandMap()->register("mysterycrate", new KeyAllCommand($this));
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$this->getLogger()->info("Plugin Enabled.");
 	}
