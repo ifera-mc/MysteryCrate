@@ -1,7 +1,7 @@
 name: MysteryCrate
 main: JackMD\MysteryCrate\Main
 api: [3.0.0]
-version: 9.0.0
+version: 9.1.0
 author: JackMD
 authors: [DaPigGuy]
 load: POSTWORLD
@@ -14,7 +14,10 @@ permissions:
   description: "Allows using the crates."
  mc.command.key:
   default: op
-  description: "Allows use of /key command"
+  description: "Allows use of /key command."
+ mc.command.keyall:
+   default: op
+   description: "Allows using /keyall command."
  mc.crates.create:
   default: op
   description: "Allows using the crates."
