@@ -81,7 +81,7 @@ class Main extends PluginBase{
 	/** @var Config */
 	private $blocksConfig;
 
-	public function onLoad(): void{
+	private function performChecks(): void{
 		$this->checkVirions();
 
 		Lang::init($this);
@@ -128,6 +128,8 @@ class Main extends PluginBase{
 	}
 
 	public function onEnable(): void{
+		$this->performChecks();
+
 		$this->initParticles();
 		$this->initTextParticle();
 
