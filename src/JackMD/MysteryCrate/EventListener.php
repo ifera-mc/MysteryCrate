@@ -40,7 +40,7 @@ use pocketmine\block\Block;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\ActorLevelChangeEvent;
+use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -220,9 +220,9 @@ class EventListener implements Listener{
 	}
 
 	/**
-	 * @param ActorLevelChangeEvent $event
+	 * @param EntityLevelChangeEvent $event
 	 */
-	public function onLevelChange(ActorLevelChangeEvent $event){
+	public function onLevelChange(EntityLevelChangeEvent $event){
 		$targetLevel = $event->getTarget();
 		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
 		if(!empty($this->plugin->getTextParticles())){
@@ -232,11 +232,11 @@ class EventListener implements Listener{
 					if($targetLevel->getFolderName() === $crateLevel){
 						$particle->setInvisible(false);
 						$lev = $event->getTarget();
-						$lev->addParticle($particle, [$event->getActor()]);
+						$lev->addParticle($particle, [$event->getEntity()]);
 					}else{
 						$particle->setInvisible(true);
 						$lev = $event->getOrigin();
-						$lev->addParticle($particle, [$event->getActor()]);
+						$lev->addParticle($particle, [$event->getEntity()]);
 					}
 				}
 			}
