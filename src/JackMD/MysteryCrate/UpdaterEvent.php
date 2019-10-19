@@ -35,8 +35,7 @@ declare(strict_types = 1);
 
 namespace JackMD\MysteryCrate;
 
-use DaPigGuy\PiggyCustomEnchants\CustomEnchants\CustomEnchants;
-use DaPigGuy\PiggyCustomEnchants\Main as CE;
+use DaPigGuy\PiggyCustomEnchants\CustomEnchantManager;
 use JackMD\MysteryCrate\lang\Lang;
 use muqsit\invmenu\inventories\BaseFakeInventory;
 use muqsit\invmenu\InvMenu;
@@ -170,14 +169,8 @@ class UpdaterEvent extends Task{
 			foreach($reward["enchantments"] as $enchantName => $enchantData){
 				$level = $enchantData["level"];
 				$ce = $this->plugin->getServer()->getPluginManager()->getPlugin("PiggyCustomEnchants");
-				if(!is_null($ce) && !is_null($enchant = CustomEnchants::getEnchantmentByName($enchantName))){
-					if($ce instanceof CE){
-						$item = $ce->addEnchantment($item, $enchantName, $level);
-					}
-				}else{
-					if(!is_null($enchant = Enchantment::getEnchantmentByName($enchantName))){
-						$item->addEnchantment(new EnchantmentInstance($enchant, $level));
-					}
+				if(!is_null($enchant = Enchantment::getEnchantmentByName($enchantName)) || (!is_null($ce) && $ce->isEnabled() && !is_null($enchant = CustomEnchantManager::getEnchantmentByName($enchantName)))){
+					$item->addEnchantment(new EnchantmentInstance($enchant, $level));
 				}
 			}
 		}
