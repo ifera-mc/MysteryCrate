@@ -203,6 +203,7 @@ class EventListener implements Listener{
 						$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), str_replace("%PLAYER%", $player->getName(), $cmd));
 					}
 
+					//Particle upon opening chest
 					$cx = $block->getX() + 0.5;
 					$cy = $block->getY() + 1.2;
 					$cz = $block->getZ() + 0.5;
@@ -211,6 +212,31 @@ class EventListener implements Listener{
 						$x = $cx + ($radius * cos($i));
 						$z = $cz + ($radius * sin($i));
 						$pos = new Vector3($x, $cy, $z);
+						$block->level->addParticle(new LavaParticle($pos));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param EntityLevelChangeEvent $event
+	 */
+	public function onLevelChange(EntityLevelChangeEvent $event){
+		$targetLevel = $event->getTarget();
+		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
+		if(!empty($this->plugin->getTextParticles())){
+			$particles = $this->plugin->getTextParticles();
+			foreach($particles as $particle){
+				if($particle instanceof FloatingTextParticle){
+					if($targetLevel->getFolderName() === $crateLevel){
+						$particle->setInvisible(false);
+						$lev = $event->getTarget();
+						$lev->addParticle($particle, [$event->getEntity()]);
+					}else{
+						$particle->setInvisible(true);
+						$lev = $event->getOrigin();
+						$lev->addParticle($particle, [$event->getEntity()]);
 					}
 				}
 			}
