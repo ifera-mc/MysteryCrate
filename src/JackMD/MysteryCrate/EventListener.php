@@ -202,6 +202,16 @@ class EventListener implements Listener{
 						$cmd = $this->plugin->getBroadcastMessage($type);
 						$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), str_replace("%PLAYER%", $player->getName(), $cmd));
 					}
+
+					$cx = $block->getX() + 0.5;
+					$cy = $block->getY() + 1.2;
+					$cz = $block->getZ() + 0.5;
+					$radius = (int) 1;
+					for($i = 0; $i < 361; $i += 1.1){
+						$x = $cx + ($radius * cos($i));
+						$z = $cz + ($radius * sin($i));
+						$pos = new Vector3($x, $cy, $z);
+					}
 				}
 			}
 		}
