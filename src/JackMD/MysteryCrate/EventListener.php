@@ -213,33 +213,3 @@ class EventListener implements Listener{
 						$z = $cz + ($radius * sin($i));
 						$pos = new Vector3($x, $cy, $z);
 						$block->level->addParticle(new LavaParticle($pos));
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param EntityLevelChangeEvent $event
-	 */
-	public function onLevelChange(EntityLevelChangeEvent $event){
-		$targetLevel = $event->getTarget();
-		$crateLevel = $this->plugin->getConfig()->get("crateWorld");
-		if(!empty($this->plugin->getTextParticles())){
-			$particles = $this->plugin->getTextParticles();
-			foreach($particles as $particle){
-				if($particle instanceof FloatingTextParticle){
-					if($targetLevel->getFolderName() === $crateLevel){
-						$particle->setInvisible(false);
-						$lev = $event->getTarget();
-						$lev->addParticle($particle, [$event->getEntity()]);
-					}else{
-						$particle->setInvisible(true);
-						$lev = $event->getOrigin();
-						$lev->addParticle($particle, [$event->getEntity()]);
-					}
-				}
-			}
-		}
-	}
-}
