@@ -213,3 +213,10 @@ class EventListener implements Listener{
 						$z = $cz + ($radius * sin($i));
 						$pos = new Vector3($x, $cy, $z);
 						$block->level->addParticle(new LavaParticle($pos));
+						}
+					}
+				}
+			}
+		}
+	}
+}
