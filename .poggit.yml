@@ -4,6 +4,8 @@ branches:
 projects:
   MysteryCrate:
     path: ""
+    lint:
+      phpstan: false
     icon: meta/MysteryCrate.png
     libs:
       - src: JackMD/UpdateNotifier/UpdateNotifier
